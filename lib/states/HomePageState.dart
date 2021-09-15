@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:compass/controls/AniControl.dart';
 import 'package:compass/controls/Animation.dart';
+import 'package:compass/utils/Storage.dart';
 import 'package:compass/widgets/CountBtnPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,16 +50,10 @@ class HomePageState extends State<HomePage> {
 
   void locate() => Location().getLocation().then((p) => setLocation(p.latitude, p.longitude));
 
-  void _showFilesinDir({Directory dir}) {
-    dir.list(recursive: false, followLinks: false)
-        .listen((FileSystemEntity entity) {
-      print(entity.path);
-    });
-  }
 
 
   @override
-  Future<void> initState() async {
+  void initState()  {
     super.initState();
 
 
@@ -78,7 +73,7 @@ class HomePageState extends State<HomePage> {
 
       compass['dir'].value =  angle.heading;
       earth['dir'].value = angle.heading;
-      print("FlutterCompass.angle.heading"+ angle.heading.toString());
+      //print("FlutterCompass.angle.heading"+ angle.heading.toString());
     });
 
     accelerometerEvents.listen((event) {
@@ -137,7 +132,7 @@ class HomePageState extends State<HomePage> {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const CountBtnPage(title: 'Flutter Demo Home Page'),
+      home: const CountBtnPage(title: 'Flutter Demo Home Page', storage: CounterStorage()),
     );
   }
 
@@ -147,7 +142,7 @@ class HomePageState extends State<HomePage> {
       body: PageView(
         controller: PageController(viewportFraction: 0.8),
         scrollDirection: Axis.vertical,
-        children: [Compass(), Earth()],
+        children: [Compass(), Earth(),GetAccess()],
       ),
     );
   }

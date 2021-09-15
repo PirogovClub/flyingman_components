@@ -1,19 +1,30 @@
+
+import 'dart:io';
+
 import 'package:compass/widgets/CountBtnPage.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PlusBtnPageState extends State<CountBtnPage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  Future<File> _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
     });
+
+    // Write the variable as a string to the file.
+    return widget.storage.writeCounter(_counter);
   }
+
+  void _showFilesinDir({Directory dir}) {
+    dir.list(recursive: false, followLinks: false)
+        .listen((FileSystemEntity entity) {
+      print(entity.path);
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +39,7 @@ class PlusBtnPageState extends State<CountBtnPage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -54,7 +66,10 @@ class PlusBtnPageState extends State<CountBtnPage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headline4,
             ),
           ],
         ),

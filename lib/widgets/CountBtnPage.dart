@@ -1,8 +1,9 @@
 import 'package:compass/states/PlusBtnPageState.dart';
+import 'package:compass/utils/Storage.dart';
 import 'package:flutter/widgets.dart';
 
 class CountBtnPage extends StatefulWidget {
-  const CountBtnPage({Key key,  this.title}) : super(key: key);
+  const CountBtnPage({Key key,  this.title, this.storage}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -14,6 +15,7 @@ class CountBtnPage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final CounterStorage storage;
 
   @override
   State<CountBtnPage> createState() => PlusBtnPageState();
