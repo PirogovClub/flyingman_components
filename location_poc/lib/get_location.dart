@@ -15,6 +15,7 @@ class _GetLocationState extends State<GetLocationWidget> {
   bool _loading = false;
 
   LocationData? _location;
+  String locationText = "";
   String? _error;
 
   Future<void> _getLocation() async {
@@ -26,6 +27,13 @@ class _GetLocationState extends State<GetLocationWidget> {
       final LocationData _locationResult = await location.getLocation();
       setState(() {
         _location = _locationResult;
+        locationText = "altitude:" +
+            _locationResult.altitude.toString() +
+            "heading:" +
+            _locationResult.heading.toString() +
+            "accuracy:" +
+            _locationResult.accuracy.toString();
+
         _loading = false;
       });
     } on PlatformException catch (err) {
@@ -42,7 +50,7 @@ class _GetLocationState extends State<GetLocationWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Location: ' + (_error ?? '${_location ?? "unknown"}'),
+          'Location: ' + (_error ?? '${locationText ?? "unknown"}'),
           style: Theme.of(context).textTheme.bodyText1,
         ),
         Row(
