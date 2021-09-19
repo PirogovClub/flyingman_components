@@ -41,8 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
 
-  Color headerIconColor = Colors.red;
-  Color headerIconBgColor = Colors.green;
+  Color headerIconColor =  Colors.white;
+  Color headerIconBgColor = Colors.red;
   double iconSize =20;
 
   void _incrementCounter() {
