@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flyingman_poc03/widgets/clock.dart';
+import 'package:flyingman_poc03/widgets/get_location.dart';
+import 'package:flyingman_poc03/widgets/listen_location.dart';
+import 'package:flyingman_poc03/widgets/permission_status_widget.dart';
+import 'package:flyingman_poc03/widgets/service_enabled.dart';
+import 'package:flyingman_poc03/utils/states_dto.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -33,7 +39,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  bool saveToFile = false;
+
+
   Color headerIconColor = Colors.red;
   Color headerIconBgColor = Colors.green;
   double iconSize =20;
@@ -50,10 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _changeRecordingStatus() {
-    saveToFile = (!saveToFile);
-    headerIconColor = saveToFile ? Colors.red : Colors.white;
-    headerIconBgColor = saveToFile ? Colors.green : Colors.red;
-    iconSize = saveToFile ? 30 : 20;
+    StateDto.setSaveToFile(!StateDto.saveToFile);
+    headerIconColor = StateDto.saveToFile ? Colors.red : Colors.white;
+    headerIconBgColor = StateDto.saveToFile ? Colors.green : Colors.red;
+    iconSize = StateDto.saveToFile ? 30 : 20;
+
   }
 
   @override
@@ -77,13 +85,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
               icon: Icon(
-                  saveToFile ? Icons.fiber_manual_record_sharp : Icons.stop),
+                  StateDto.saveToFile ?  Icons.stop : Icons.fiber_manual_record_sharp),
               color: headerIconColor)
         ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
         child: Column(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
@@ -101,6 +108,14 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            PermissionStatusWidget(),
+            Divider(height: 32),
+            ServiceEnabledWidget(),
+            Divider(height: 32),
+            ListenLocationWidget(),
+            Divider(height: 32),
+            DigitalClockWidget(),
+            Divider(height: 32),
             const Text(
               'You have pushed the button this many times:',
             ),
@@ -118,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         tooltip: 'Increment',
-        child: Icon(saveToFile ? Icons.stop : Icons.fiber_manual_record_sharp,color: headerIconColor, size : iconSize ,),
+        child: Icon(StateDto.saveToFile ? Icons.stop : Icons.fiber_manual_record_sharp,color: headerIconColor, size : iconSize ,),
         backgroundColor: headerIconBgColor,
 
 
