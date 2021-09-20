@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
 import 'package:flyingman_poc03/widgets/get_location.dart';
 import 'package:flyingman_poc03/widgets/listen_location.dart';
 import 'package:flyingman_poc03/widgets/permission_status_widget.dart';
+import 'package:flyingman_poc03/widgets/sensors.dart';
 import 'package:flyingman_poc03/widgets/service_enabled.dart';
 import 'package:flyingman_poc03/utils/states_dto.dart';
 
@@ -40,10 +43,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-
-  Color headerIconColor =  Colors.white;
+  final _streamSubscriptions = <StreamSubscription<dynamic>>[];
+  Color headerIconColor = Colors.white;
   Color headerIconBgColor = Colors.red;
-  double iconSize =20;
+  double iconSize = 20;
 
   void _incrementCounter() {
     setState(() {
@@ -61,7 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
     headerIconColor = StateDto.saveToFile ? Colors.red : Colors.white;
     headerIconBgColor = StateDto.saveToFile ? Colors.green : Colors.red;
     iconSize = StateDto.saveToFile ? 30 : 20;
-
   }
 
   @override
@@ -84,8 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   _changeRecordingStatus();
                 });
               },
-              icon: Icon(
-                  StateDto.saveToFile ?  Icons.stop : Icons.fiber_manual_record_sharp),
+              icon: Icon(StateDto.saveToFile
+                  ? Icons.stop
+                  : Icons.fiber_manual_record_sharp),
               color: headerIconColor)
         ],
       ),
@@ -116,13 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Divider(height: 32),
             DigitalClockWidget(),
             Divider(height: 32),
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            SensorsWidget(),
+            Divider(height: 32),
           ],
         ),
       ),
@@ -133,11 +131,21 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         tooltip: 'Increment',
-        child: Icon(StateDto.saveToFile ? Icons.stop : Icons.fiber_manual_record_sharp,color: headerIconColor, size : iconSize ,),
+        child: Icon(
+          StateDto.saveToFile ? Icons.stop : Icons.fiber_manual_record_sharp,
+          color: headerIconColor,
+          size: iconSize,
+        ),
         backgroundColor: headerIconBgColor,
-
-
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    for (final subscription in _streamSubscriptions) {
+      subscription.cancel();
+    }
   }
 }

@@ -53,7 +53,7 @@ class _GetLocationState extends State<GetLocationWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Location: ' + (_error ?? '${_locationText ?? "unknown"}'),
+          'Location: ' + (_error ?? _locationText ),
           style: Theme.of(context).textTheme.bodyText1,
         ),
         Row(

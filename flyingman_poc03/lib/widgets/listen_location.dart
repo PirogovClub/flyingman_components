@@ -97,7 +97,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Listen location: ' + (_error ?? '${_locationText ?? "unknown"}'),
+          'Listen location: ' + (_error ?? _locationText ),
           style: Theme.of(context).textTheme.bodyText1,
         ),
         Row(
