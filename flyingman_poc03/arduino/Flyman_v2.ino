@@ -28,39 +28,39 @@ float ground_level2 = 0;
 float ground_level3 = 0;
 float ground_level4 = 0;
 
-int feet_alt1 = 0;
-int temp1 = 0; // Temperature in Celsius
-int pressure1 = 0; // Pessure in hPA
-int alt_m1 = 0; // Altitude in meters
-int alt_feet1 = 0; // Altitude in feets
-int humidity1 = 0; // Humidity in percents
+float feet_alt1 = 0;
+float temp1 = 0; // Temperature in Celsius
+float pressure1 = 0; // Pessure in hPA
+float alt_m1 = 0; // Altitude in meters
+float alt_feet1 = 0; // Altitude in feets
+float humidity1 = 0; // Humidity in percents
 
-int feet_alt2 = 0;
-int temp2 = 0; // Temperature in Celsius
-int pressure2 = 0; // Pessure in hPA
-int alt_m2 = 0; // Altitude in meters
-int alt_feet2 = 0; // Altitude in feets
-int humidity2 = 0; // Humidity in percents
+float feet_alt2 = 0;
+float temp2 = 0; // Temperature in Celsius
+float pressure2 = 0; // Pessure in hPA
+float alt_m2 = 0; // Altitude in meters
+float alt_feet2 = 0; // Altitude in feets
+float humidity2 = 0; // Humidity in percents
 
-int feet_alt3 = 0;
-int temp3 = 0; // Temperature in Celsius
-int pressure3 = 0; // Pessure in hPA
-int alt_m3 = 0; // Altitude in meters
-int alt_feet3 = 0; // Altitude in feets
-int humidity3 = 0; // Humidity in percents
+float feet_alt3 = 0;
+float temp3 = 0; // Temperature in Celsius
+float pressure3 = 0; // Pessure in hPA
+float alt_m3 = 0; // Altitude in meters
+float alt_feet3 = 0; // Altitude in feets
+float humidity3 = 0; // Humidity in percents
 
-int feet_alt4 = 0;
-int temp4 = 0; // Temperature in Celsius
-int pressure4 = 0; // Pessure in hPA
-int alt_m4 = 0; // Altitude in meters
-int alt_feet4 = 0; // Altitude in feets
-int humidity4 = 0; // Humidity in percents
+float feet_alt4 = 0;
+float temp4 = 0; // Temperature in Celsius
+float pressure4 = 0; // Pessure in hPA
+float alt_m4 = 0; // Altitude in meters
+float alt_feet4 = 0; // Altitude in feets
+float humidity4 = 0; // Humidity in percents
 
 //int counting = 0;
 
 
 
-// Check channel number and enable transmission's data
+// Check chanel number and enable transmission's data
 void tcaselect(uint8_t i) {
   if (i > 7) return;
  
@@ -133,7 +133,7 @@ void loop() {
 //Set "ground level flag". Now we have to push button on board foe set flag but later we can do same action thru serial
   if(!digitalRead(5)){
 // Button on board id pushed 
-  Serial.println("Btn - OK");
+ // Serial.println("Btn - OK");
     ground_level_flag = '1';
   } 
 
@@ -142,14 +142,14 @@ void loop() {
       ground_level2 = bme2.readAltitude(SEALEVELPRESSURE_HPA);
       ground_level3 = bme3.readAltitude(SEALEVELPRESSURE_HPA);
       ground_level4 = bme4.readAltitude(SEALEVELPRESSURE_HPA);
-       Serial.println(ground_level1);
-       Serial.println(ground_level2);
-       Serial.println(ground_level3);
-       Serial.println(ground_level4);
+    //   Serial.println(ground_level1);
+    //   Serial.println(ground_level2);
+    //   Serial.println(ground_level3);
+    //   Serial.println(ground_level4);
       ground_level_flag = '0'; // Reset button flag
       }
 
-  printToAndroid(); // Функция которая собирает строку на отправку данных
+  printToAndroid(); // Send string to Android App   
       
 
 
@@ -159,32 +159,33 @@ void loop() {
 
 void printToAndroid() {
     
-    // Тут мы присваиваем значения переменным, TRUNK округляет, попробую ее убрать, там вроде какая то проблема была если не округлять, но это было критично для работы с визуальным программированием
-    temp1 = trunc(bme1.readTemperature()); // Присваиваем температуру с первого датчика
-    pressure1 = trunc(bme1.readPressure() / 100.0F); // Присваиваем давление со первого датчика
-    alt_m1 = trunc(bme1.readAltitude(SEALEVELPRESSURE_HPA)) - trunc(ground_level1); //Присваиваем высоту в метрах с первого датчика за вычетом нулевой отметки
-    alt_feet1 = ((trunc(bme1.readAltitude(SEALEVELPRESSURE_HPA))- trunc(ground_level1))*3.28084); //Присваиваем высоту в футах с первого датчика за вычетом нулевой отметки
-    humidity1 = trunc(bme1.readHumidity()); //Присваиваем влажность с первого датчика
+    // Set output variable
+    temp1 = bme1.readTemperature();
+    pressure1 = bme1.readPressure() / 100.0F;
+    alt_m1 = (bme1.readAltitude(SEALEVELPRESSURE_HPA)) - (ground_level1);
+    alt_feet1 = (((bme1.readAltitude(SEALEVELPRESSURE_HPA))- (ground_level1))*3.28084);
+    humidity1 = (bme1.readHumidity());
 
-    temp2 = trunc(bme2.readTemperature());
-    pressure2 = trunc(bme2.readPressure() / 100.0F);
-    alt_m2 = trunc(bme2.readAltitude(SEALEVELPRESSURE_HPA)) - trunc(ground_level2);
-    alt_feet2 = ((trunc(bme2.readAltitude(SEALEVELPRESSURE_HPA))- trunc(ground_level2))*3.28084);
-    humidity2 = trunc(bme2.readHumidity());    
+    temp2 = (bme2.readTemperature());
+    pressure2 = (bme2.readPressure() / 100.0F);
+    alt_m2 = (bme2.readAltitude(SEALEVELPRESSURE_HPA)) - (ground_level2);
+    alt_feet2 = (((bme2.readAltitude(SEALEVELPRESSURE_HPA))- (ground_level2))*3.28084);
+    humidity2 = (bme2.readHumidity());    
 
-    temp3 = trunc(bme3.readTemperature());
-    pressure3 = trunc(bme3.readPressure() / 100.0F);
-    alt_m3 = trunc(bme3.readAltitude(SEALEVELPRESSURE_HPA)) - trunc(ground_level3);
-    alt_feet3 = ((trunc(bme3.readAltitude(SEALEVELPRESSURE_HPA))- trunc(ground_level3))*3.28084);
-    humidity3 = trunc(bme3.readHumidity());   
+    temp3 = (bme3.readTemperature());
+    pressure3 = (bme3.readPressure() / 100.0F);
+    alt_m3 = (bme3.readAltitude(SEALEVELPRESSURE_HPA)) - (ground_level3);
+    alt_feet3 = (((bme3.readAltitude(SEALEVELPRESSURE_HPA))- (ground_level3))*3.28084);
+    humidity3 = (bme3.readHumidity());   
 
-    temp4 = trunc(bme4.readTemperature());
-    pressure4 = trunc(bme4.readPressure() / 100.0F);
-    alt_m4 = trunc(bme4.readAltitude(SEALEVELPRESSURE_HPA)) - trunc(ground_level4);
-    alt_feet4 = ((trunc(bme4.readAltitude(SEALEVELPRESSURE_HPA))- trunc(ground_level4))*3.28084);
-    humidity4 = trunc(bme4.readHumidity());   
+    temp4 = (bme4.readTemperature());
+    pressure4 = (bme4.readPressure() / 100.0F);
+    alt_m4 = (bme4.readAltitude(SEALEVELPRESSURE_HPA)) - (ground_level4);
+    alt_feet4 = (((bme4.readAltitude(SEALEVELPRESSURE_HPA))- (ground_level4))*3.28084);
+    humidity4 = (bme4.readHumidity());   
     
-   // Составляем строку для передачи через блютус
+
+    // Make output string
     Serial.print("BME1;");
     Serial.print(String(temp1));
     Serial.print(";");
