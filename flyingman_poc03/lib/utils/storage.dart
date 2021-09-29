@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 
 enum StorageType {
   internal,
@@ -70,11 +72,36 @@ class CounterStorage {
     return file.writeAsString('$counter', mode: FileMode.append);
   }
 
+  Future<File> storeData(String string) async {
+    final file = await getFile(storageType);
+    string = string +"\n";
+    // Write the file
+    return file.writeAsString(string, mode: FileMode.append);
+  }
+
   Future<File> writeStringToFile(String string) async {
     final file = await getFile(storageType);
     string = string +"\n";
     // Write the file
     return file.writeAsString(string, mode: FileMode.append);
+  }
+
+  Future<String> saveToDB(String title) async {
+    return (await http.post(
+      Uri.parse('http://69.87.221.132:8080/sensordata/add'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+
+          "sensorId": "a2e67216-2964-492a-9e7a-898f29a54430",
+          "pressure": "72.5",
+          "temperature": "45.8",
+          "humidity": "55.66",
+          "measurementId": "a2e67216-2964-492a-9e7a-898f29a54430"
+
+      }),
+    )).body.toString();
   }
 
 }

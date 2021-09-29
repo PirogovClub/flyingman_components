@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flyingman_poc03/main_bluetooth_page.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
 import 'package:flyingman_poc03/widgets/get_location.dart';
 import 'package:flyingman_poc03/widgets/listen_location.dart';
 import 'package:flyingman_poc03/widgets/permission_status_widget.dart';
+import 'package:flyingman_poc03/widgets/send_to_server.dart';
 import 'package:flyingman_poc03/widgets/sensors.dart';
 import 'package:flyingman_poc03/widgets/service_enabled.dart';
 import 'package:flyingman_poc03/utils/states_dto.dart';
@@ -121,6 +123,9 @@ class _MyHomePageState extends State<MyHomePage> {
             Divider(height: 32),
             SensorsWidget(),
             Divider(height: 32),
+            SendToServerWidget(),
+            Divider(height: 32),
+            BlueToothWidget()
           ],
         ),
       ),

@@ -53,7 +53,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
           "latitude:" +
           _locationResult.latitude.toString() +
           ";" +
-          "latitude:" +
+          "longitude:" +
           _locationResult.longitude.toString() +
           ";" +
           "heading:" +
@@ -68,7 +68,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
           _date.toString() +
           ";";
       if (StateDto.saveToFile) {
-        await _counterStorage.writeStringToFile(_locationText);
+        await _counterStorage.storeData(_locationText);
       }
       setState(() {});
     });
