@@ -60,7 +60,7 @@ int humidity4 = 0; // Humidity in percents
 
 
 
-// Check chanel number and enable transmission's data
+// Check channel number and enable transmission's data
 void tcaselect(uint8_t i) {
   if (i > 7) return;
  
@@ -149,7 +149,7 @@ void loop() {
       ground_level_flag = '0'; // Reset button flag
       }
 
-  printToAndroid(); // Print string to Android App   
+  printToAndroid(); // Функция которая собирает строку на отправку данных
       
 
 
@@ -159,12 +159,12 @@ void loop() {
 
 void printToAndroid() {
     
-    // set output BME
-    temp1 = trunc(bme1.readTemperature());
-    pressure1 = trunc(bme1.readPressure() / 100.0F);
-    alt_m1 = trunc(bme1.readAltitude(SEALEVELPRESSURE_HPA)) - trunc(ground_level1);
-    alt_feet1 = ((trunc(bme1.readAltitude(SEALEVELPRESSURE_HPA))- trunc(ground_level1))*3.28084);
-    humidity1 = trunc(bme1.readHumidity());
+    // Тут мы присваиваем значения переменным, TRUNK округляет, попробую ее убрать, там вроде какая то проблема была если не округлять, но это было критично для работы с визуальным программированием
+    temp1 = trunc(bme1.readTemperature()); // Присваиваем температуру с первого датчика
+    pressure1 = trunc(bme1.readPressure() / 100.0F); // Присваиваем давление со первого датчика
+    alt_m1 = trunc(bme1.readAltitude(SEALEVELPRESSURE_HPA)) - trunc(ground_level1); //Присваиваем высоту в метрах с первого датчика за вычетом нулевой отметки
+    alt_feet1 = ((trunc(bme1.readAltitude(SEALEVELPRESSURE_HPA))- trunc(ground_level1))*3.28084); //Присваиваем высоту в футах с первого датчика за вычетом нулевой отметки
+    humidity1 = trunc(bme1.readHumidity()); //Присваиваем влажность с первого датчика
 
     temp2 = trunc(bme2.readTemperature());
     pressure2 = trunc(bme2.readPressure() / 100.0F);
@@ -184,7 +184,7 @@ void printToAndroid() {
     alt_feet4 = ((trunc(bme4.readAltitude(SEALEVELPRESSURE_HPA))- trunc(ground_level4))*3.28084);
     humidity4 = trunc(bme4.readHumidity());   
     
-   
+   // Составляем строку для передачи через блютус
     Serial.print("BME1;");
     Serial.print(String(temp1));
     Serial.print(";");
