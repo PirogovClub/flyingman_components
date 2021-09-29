@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flyingman_poc03/main_bluetooth_page.dart';
+import 'package:flyingman_poc03/bluetooth/main_bluetooth_page.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
 import 'package:flyingman_poc03/widgets/get_location.dart';
 import 'package:flyingman_poc03/widgets/listen_location.dart';

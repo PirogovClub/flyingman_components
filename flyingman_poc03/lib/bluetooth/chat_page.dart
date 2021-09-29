@@ -96,11 +96,11 @@ class _ChatPage extends State<ChatPage> {
                 style: TextStyle(color: Colors.white)),
             padding: EdgeInsets.all(12.0),
             margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
-            width: 222.0,
+            width: 252.0,
             decoration: BoxDecoration(
                 color:
                     _message.whom == clientID ? Colors.blueAccent : Colors.grey,
-                borderRadius: BorderRadius.circular(7.0)),
+                borderRadius: BorderRadius.circular(20.0)),
           ),
         ],
         mainAxisAlignment: _message.whom == clientID

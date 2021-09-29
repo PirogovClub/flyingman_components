@@ -186,7 +186,7 @@ void printToAndroid() {
     
 
     // Make output string
-    Serial.print("BME1;");
+    Serial.print("BME1\";");
     Serial.print(String(temp1));
     Serial.print(";");
     Serial.print(String(pressure1));

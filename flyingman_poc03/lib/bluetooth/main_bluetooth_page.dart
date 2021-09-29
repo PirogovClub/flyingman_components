@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import './background_collected_page.dart';
-import './background_collecting_task.dart';
-import './chat_page.dart';
-import './discovery_page.dart';
-import './select_bonded_device_page.dart';
+import 'background_collected_page.dart';
+import 'background_collecting_task.dart';
+import 'chat_page.dart';
+import 'discovery_page.dart';
+import 'select_bonded_device_page.dart';
 
 // import './helpers/line_chart.dart';
 
