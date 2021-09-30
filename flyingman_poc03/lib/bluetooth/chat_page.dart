@@ -4,6 +4,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flyingman_poc03/dto/domain/bme_sensor_data.dart';
+import 'package:flyingman_poc03/dto/parsers/bme_sensor_parser.dart';
 
 class ChatPage extends StatefulWidget {
   final BluetoothDevice server;
@@ -33,6 +35,7 @@ class _ChatPage extends State<ChatPage> {
   final ScrollController listScrollController = new ScrollController();
 
   bool isConnecting = true;
+
   bool get isConnected => (connection?.isConnected ?? false);
 
   bool isDisconnecting = false;
@@ -201,6 +204,16 @@ class _ChatPage extends State<ChatPage> {
                 : _messageBuffer + dataString.substring(0, index),
           ),
         );
+
+        //adding json
+        messages.add(_Message(
+            1,
+            parseBmeSensorsData(
+              backspacesCounter > 0
+                  ? _messageBuffer.substring(
+                      0, _messageBuffer.length - backspacesCounter)
+                  : _messageBuffer + dataString.substring(0, index),
+            ).toString()));
         _messageBuffer = dataString.substring(index);
       });
     } else {
