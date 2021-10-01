@@ -44,32 +44,34 @@ class _ListenLocationState extends State<ListenLocationWidget> {
       _location = _locationResult;
       var _date = new DateTime.fromMillisecondsSinceEpoch(
           _locationResult.time!.toInt());
-      _locationText = "localTime:" +
+      _locationText = "{\"Name\":\"GPS\"," +
+          "\"localTime\":\"" +
           _localSystemTimeUtil.getSystemTime() +
-          ";" +
-          "altitude:" +
+          "\"," +
+          "\"altitude\":\"" +
           _locationResult.altitude.toString() +
-          ";" +
-          "latitude:" +
+          "\"," +
+          "\"latitude\":\"" +
           _locationResult.latitude.toString() +
-          ";" +
-          "longitude:" +
+          "\"," +
+          "\"longitude\":\"" +
           _locationResult.longitude.toString() +
-          ";" +
-          "heading:" +
-          ";" +
+          "\"," +
+          "\"heading\":\"" +
+          "\"," +
           _locationResult.heading.toString() +
-          ";" +
-          "accuracy:" +
-          ";" +
+          "\"," +
+          "\"accuracy\":\"" +
+          "\"," +
           _locationResult.accuracy.toString() +
-          ";" +
-          "time:" +
+          "\"," +
+          "\"time\":\"" +
           _date.toString() +
-          ";";
+          "\"}";
       if (StateDto.saveToFile) {
         await _counterStorage.storeData(_locationText);
       }
+      _counterStorage.locationData = _locationText;
       setState(() {});
     });
     setState(() {});
@@ -97,7 +99,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Listen location: ' + (_error ?? _locationText ),
+          'Listen location: ' + (_error ?? _locationText),
           style: Theme.of(context).textTheme.bodyText1,
         ),
         Row(

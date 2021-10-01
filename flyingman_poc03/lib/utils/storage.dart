@@ -9,11 +9,19 @@ enum StorageType {
   external
 }
 
-class CounterStorage {
+ class CounterStorage {
 
   //choose where to store file
   //TODO:make this place more secure
   StorageType storageType = StorageType.external;
+
+  static String _locationData ="";
+
+  set locationData(String value) {
+    _locationData = value;
+  }
+
+  String get locationData => _locationData;
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();

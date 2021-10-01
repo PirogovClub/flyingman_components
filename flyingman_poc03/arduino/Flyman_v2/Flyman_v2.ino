@@ -186,38 +186,76 @@ void printToAndroid() {
     
 
     // Make output string
-    Serial.print("{\"data\":[");
-    Serial.print("{\"Name\":\"BME01\",");
-    Serial.print("\"T\":"+String(temp1)+",");
-    Serial.print("\"P\":"+String(pressure1)+",");
-    Serial.print("\"AltitudeM\":"+String(alt_m1)+",");
-    Serial.print("\"AltitudeF\":"+String(alt_feet1)+",");
-    Serial.print("\"Hm\":"+String(humidity1));
-    Serial.print("},");
-    Serial.print("{\"Name\":\"BME02\",");
-    Serial.print("\"T\":"+String(temp2)+",");
-    Serial.print("\"P\":"+String(pressure2)+",");
-    Serial.print("\"AltitudeM\":"+String(alt_m2)+",");
-    Serial.print("\"AltitudeF\":"+String(alt_feet2)+",");
-    Serial.print("\"Hm\":"+String(humidity2));
-    Serial.print("},");
-    Serial.print("{\"Name\":\"BME03\",");
-    Serial.print("\"T\":"+String(temp3)+",");
-    Serial.print("\"P\":"+String(pressure3)+",");
-    Serial.print("\"AltitudeM\":"+String(alt_m3)+",");
-    Serial.print("\"AltitudeF\":"+String(alt_feet3)+",");
-    Serial.print("\"Hm\":"+String(humidity3));
-    Serial.print("},");
-    Serial.print("{\"Name\":\"BME04\",");
-    Serial.print("\"T\":"+String(temp4)+",");
-    Serial.print("\"P\":"+String(pressure4)+",");
-    Serial.print("\"AltitudeM\":"+String(alt_m4)+",");
-    Serial.print("\"AltitudeF\":"+String(alt_feet4)+",");
-    Serial.print("\"Hm\":"+String(humidity4));
-    Serial.print("}");
-    Serial.print("]");
-    Serial.print("}");
-    Serial.println();
+
+
+
+outputDataString="{\"Name\":\"BME01\",";
+outputDataString.concat("\"T\":"+String(temp1)+",");
+outputDataString.concat("\"P\":"+String(pressure1)+",");
+outputDataString.concat("\"AltitudeM\":"+String(alt_m1)+",");
+outputDataString.concat("\"AltitudeF\":"+String(alt_feet1)+",");
+outputDataString.concat("\"Hm\":"+String(humidity1));
+outputDataString.concat("}");
+Serial.println(outputDataString);
+outputDataString="";
+outputDataString.concat("{\"Name\":\"BME02\",");
+outputDataString.concat("\"T\":"+String(temp2)+",");
+outputDataString.concat("\"P\":"+String(pressure2)+",");
+outputDataString.concat("\"AltitudeM\":"+String(alt_m2)+",");
+outputDataString.concat("\"AltitudeF\":"+String(alt_feet2)+",");
+outputDataString.concat("\"Hm\":"+String(humidity2));
+outputDataString.concat("}");
+Serial.println(outputDataString);
+outputDataString="";
+outputDataString.concat("{\"Name\":\"BME03\",");
+outputDataString.concat("\"T\":"+String(temp3)+",");
+outputDataString.concat("\"P\":"+String(pressure3)+",");
+outputDataString.concat("\"AltitudeM\":"+String(alt_m3)+",");
+outputDataString.concat("\"AltitudeF\":"+String(alt_feet3)+",");
+outputDataString.concat("\"Hm\":"+String(humidity3));
+outputDataString.concat("}");
+Serial.println(outputDataString);
+outputDataString="";
+outputDataString.concat("{\"Name\":\"BME04\",");
+outputDataString.concat("\"T\":"+String(temp4)+",");
+outputDataString.concat("\"P\":"+String(pressure4)+",");
+outputDataString.concat("\"AltitudeM\":"+String(alt_m4)+",");
+outputDataString.concat("\"AltitudeF\":"+String(alt_feet4)+",");
+outputDataString.concat("\"Hm\":");
+outputDataString.concat(String(humidity4));
+outputDataString.concat("}");
+Serial.println(outputDataString);
+outputDataString="";
+    
+//    Serial.print("{\"data\":["+"{\"Name\":\"BME01\",");
+//    Serial.print("\"T\":"+String(temp1)+",");
+//    Serial.print("\"P\":"+String(pressure1)+",");
+//    Serial.print("\"AltitudeM\":"+String(alt_m1)+",");
+//    Serial.print("\"AltitudeF\":"+String(alt_feet1)+",");
+//    Serial.print("\"Hm\":"+String(humidity1));
+//    Serial.print("},");
+//    Serial.print("{\"Name\":\"BME02\",");
+//    Serial.print("\"T\":"+String(temp2)+",");
+//    Serial.print("\"P\":"+String(pressure2)+",");
+//    Serial.print("\"AltitudeM\":"+String(alt_m2)+",");
+//    Serial.print("\"AltitudeF\":"+String(alt_feet2)+",");
+//    Serial.print("\"Hm\":"+String(humidity2));
+//    Serial.print("},");
+//    Serial.print("{\"Name\":\"BME03\",");
+//    Serial.print("\"T\":"+String(temp3)+",");
+//    Serial.print("\"P\":"+String(pressure3)+",");
+//    Serial.print("\"AltitudeM\":"+String(alt_m3)+",");
+//    Serial.print("\"AltitudeF\":"+String(alt_feet3)+",");
+//    Serial.print("\"Hm\":"+String(humidity3));
+//    Serial.print("},");
+//    Serial.print("{\"Name\":\"BME04\",");
+//    Serial.print("\"T\":"+String(temp4)+",");
+//    Serial.print("\"P\":"+String(pressure4)+",");
+//    Serial.print("\"AltitudeM\":"+String(alt_m4)+",");
+//    Serial.print("\"AltitudeF\":"+String(alt_feet4)+",");
+//    Serial.print("\"Hm\":"+String(humidity4)+"}]}");
+//    Serial.println();
+    
 
     delay(0);
 }
