@@ -1,27 +1,25 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flyingman_poc03/utils/storage.dart';
+import 'package:http/src/response.dart';
 import 'package:intl/intl.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:flyingman_poc03/utils/local_system_time_util.dart';
-
 
 class SendToServerWidget extends StatefulWidget {
   const SendToServerWidget({Key? key}) : super(key: key);
 
   @override
   _SendToServerState createState() => _SendToServerState();
-
 }
 
 class _SendToServerState extends State<SendToServerWidget> {
+  CounterStorage _counterStorage = new CounterStorage();
   var _serverResponse;
   LocalSystemTimeUtil _localSystemTimeUtil = new LocalSystemTimeUtil();
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -36,7 +34,6 @@ class _SendToServerState extends State<SendToServerWidget> {
                 onPressed: _sendQuery,
               ),
             ),
-
           ],
         )
       ],
@@ -44,13 +41,33 @@ class _SendToServerState extends State<SendToServerWidget> {
   }
 
   Future<void> _sendQuery() async {
-
     CounterStorage counterStorage = new CounterStorage();
-    final String serviceEnabledResult = await counterStorage.saveToDB("title");
-    setState(() {
-      _serverResponse = serviceEnabledResult;
-    });
+    _serverResponse = "";
+    counterStorage
+        .saveToDB(_counterStorage.locationData, "phonedata")
+        .then((value) => getBody(value))
+        .then((value) => Future.delayed(
+            Duration(
+              seconds: 1,
+            ),
+            () async => value))
+        .then((value) => {
+              setState(() {
+                _serverResponse += value;
+              })
+            });
+    counterStorage
+        .saveToDB(_counterStorage.locationData, "phonedata")
+        .then((value) => getBody(value))
+        .then((value) => {
+              setState(() {
+                _serverResponse += value;
+              })
+            });
   }
 
-
+  String getBody(Response value) {
+    print("body:" + value.body.toString());
+    return value.body.toString();
+  }
 }

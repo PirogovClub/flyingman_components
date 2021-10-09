@@ -9,6 +9,7 @@ import 'package:flyingman_poc03/dto/parsers/bme_sensor_parser.dart';
 import 'package:flyingman_poc03/utils/local_system_time_util.dart';
 import 'package:flyingman_poc03/utils/states_dto.dart';
 import 'package:flyingman_poc03/utils/storage.dart';
+import 'package:dialog_loader/dialog_loader.dart';
 
 class ChatPage extends StatefulWidget {
   final BluetoothDevice server;
@@ -27,6 +28,8 @@ class _Message {
 }
 
 class _ChatPage extends State<ChatPage> {
+
+
   static final clientID = 0;
   BluetoothConnection? connection;
   LocalSystemTimeUtil _localSystemTimeUtil = new LocalSystemTimeUtil();
@@ -35,7 +38,7 @@ class _ChatPage extends State<ChatPage> {
   String _messageBuffer = '';
 
   final TextEditingController textEditingController =
-      new TextEditingController();
+  new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
 
   bool isConnecting = true;
@@ -97,18 +100,20 @@ class _ChatPage extends State<ChatPage> {
         children: <Widget>[
           Container(
             child: Text(
-                (text) {
+                    (text) {
                   return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
                 }(_message.text.trim()),
                 style: TextStyle(color: Colors.white)),
+
             padding: EdgeInsets.all(12.0),
             margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
             width: 252.0,
             decoration: BoxDecoration(
                 color:
-                    _message.whom == clientID ? Colors.blueAccent : Colors.grey,
+                _message.whom == clientID ? Colors.blueAccent : Colors.grey,
                 borderRadius: BorderRadius.circular(20.0)),
           ),
+
         ],
         mainAxisAlignment: _message.whom == clientID
             ? MainAxisAlignment.end
@@ -122,8 +127,8 @@ class _ChatPage extends State<ChatPage> {
           title: (isConnecting
               ? Text('Connecting chat to ' + serverName + '...')
               : isConnected
-                  ? Text('Live chat with ' + serverName)
-                  : Text('Chat log with ' + serverName))),
+              ? Text('Live chat with ' + serverName)
+              : Text('Chat log with ' + serverName))),
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -145,8 +150,8 @@ class _ChatPage extends State<ChatPage> {
                         hintText: isConnecting
                             ? 'Wait until connected...'
                             : isConnected
-                                ? 'Type your message...'
-                                : 'Chat got disconnected',
+                            ? 'Type your message...'
+                            : 'Chat got disconnected',
                         hintStyle: const TextStyle(color: Colors.grey),
                       ),
                       enabled: isConnected,
@@ -169,7 +174,8 @@ class _ChatPage extends State<ChatPage> {
     );
   }
 
-  _onDataReceived(Uint8List data) {
+  _onDataReceived(Uint8List data) async {
+    String response = "";
     /* // Allocate buffer for parsed data
     int backspacesCounter = 0;
     data.forEach((byte) {
@@ -219,18 +225,28 @@ class _ChatPage extends State<ChatPage> {
                 "\"," +
                 ",\"loc\":\"" +
                 _counterStorage.locationData +
-                "\"}";
+                "\"}_";
+
+
+        if (StateDto.saveToFile) {
+          _counterStorage.saveToDB(_messageBuffer, "sensordata").then((
+              value) => {
+
+                  messages.add(_Message(1, "Request sent" + _messageBuffer))
+
+          });
+          _messageBuffer = _messageBuffer;
+          //_counterStorage.saveToDB(_counterStorage.locationData,"phonedata");
+        }
+
 
         setState(() {
           messages.add(_Message(1, _messageBuffer));
         });
-        if (messages.length > 10) {
+        if (messages.length > 100) {
           messages.removeAt(0);
         }
-        if (StateDto.saveToFile) {
-          _counterStorage.storeData(_messageBuffer);
-          _counterStorage.storeData(_counterStorage.locationData);
-        }
+
         _messageBuffer = "";
         //adding json
         //var parseBmeSensorsData2 = parseBmeSensorsData(textToAdd);

@@ -71,6 +71,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  dialog_loader:
+    dependency: "direct main"
+    description:
+      name: dialog_loader
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3+3"
   fake_async:
     dependency: transitive
     description:
@@ -127,7 +134,7 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.3"
+    version: "0.13.4"
   http_parser:
     dependency: transitive
     description:
@@ -233,13 +240,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
-  pedantic:
-    dependency: transitive
-    description:
-      name: pedantic
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.11.1"
   platform:
     dependency: transitive
     description:
@@ -253,7 +253,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   process:
     dependency: transitive
     description:
@@ -274,7 +274,7 @@ packages:
       name: sensors_plus
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.1"
   sensors_plus_platform_interface:
     dependency: transitive
     description:
@@ -398,7 +398,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.4"
+    version: "3.0.5"
   vector_math:
     dependency: transitive
     description:
