@@ -43,19 +43,7 @@ class _SendToServerState extends State<SendToServerWidget> {
   Future<void> _sendQuery() async {
     CounterStorage counterStorage = new CounterStorage();
     _serverResponse = "";
-    counterStorage
-        .saveToDB(_counterStorage.locationData, "phonedata")
-        .then((value) => getBody(value))
-        .then((value) => Future.delayed(
-            Duration(
-              seconds: 1,
-            ),
-            () async => value))
-        .then((value) => {
-              setState(() {
-                _serverResponse += value;
-              })
-            });
+
     counterStorage
         .saveToDB(_counterStorage.locationData, "phonedata")
         .then((value) => getBody(value))

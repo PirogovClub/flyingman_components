@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flyingman_poc03/dto/domain/phone_sensor_data.dart';
 import 'package:flyingman_poc03/utils/uid.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
@@ -94,7 +95,7 @@ class CounterStorage {
 
   Future<Response> saveToDB(Object objectTSend, String sensorType) async {
     String uuid = Uid().getSensorID("Phone");
-    String string = """{\"sensorId\": \"2c497cf7-7697-4a5c-8cb7-bc1657d88883\",
+    String jsonStringSample = """{\"sensorId\": \"2c497cf7-7697-4a5c-8cb7-bc1657d88883\",
             \"gyroscope_x\": 22.35,
     \"gyroscope_y\": 22.35,
     \"gyroscope_z\": 22.35,
@@ -124,10 +125,13 @@ class CounterStorage {
   \"time\": \"2021-10-03T09:09:00.403-08:00\",
   \"local_time\": \"2021-10-03T09:09:00.403-08:00\"
  }""";
+    Map<String,dynamic> json = jsonDecode(jsonStringSample);
+    PhoneSensorData phoneSensorData = PhoneSensorData.fromJson(json);
+    print(phoneSensorData);
     return (http.post(Uri.parse('http://69.87.221.132:8080/phonedata/add'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: string));
+        body: jsonStringSample));
   }
 }
