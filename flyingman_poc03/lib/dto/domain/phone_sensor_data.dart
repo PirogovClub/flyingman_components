@@ -1,6 +1,5 @@
 import 'package:decimal/decimal.dart';
 import 'package:intl/intl.dart';
-
 import 'mesurments.dart';
 
 class PhoneSensorData {
@@ -13,23 +12,23 @@ class PhoneSensorData {
   print(outputDate); // 12/31/2000 11:59 PM <-- MM/dd 12H format*/
 
   final String sensorId;
-  final Decimal gyroscope_x;
-  final Decimal gyroscope_y;
-  final Decimal gyroscope_z;
-  final Decimal magnitometr_x;
-  final Decimal magnitometr_y;
-  final Decimal magnitometr_z;
-  final Decimal accelerometer_x;
-  final Decimal accelerometer_y;
-  final Decimal accelerometer_z;
-  final Decimal user_accelerometer_x;
-  final Decimal user_accelerometer_y;
-  final Decimal user_accelerometer_z;
-  final Decimal altitude;
-  final Decimal latitude;
-  final Decimal longitude;
-  final Decimal heading;
-  final Decimal accuracy;
+  final double gyroscope_x;
+  final double gyroscope_y;
+  final double gyroscope_z;
+  final double magnitometr_x;
+  final double magnitometr_y;
+  final double magnitometr_z;
+  final double accelerometer_x;
+  final double accelerometer_y;
+  final double accelerometer_z;
+  final double user_accelerometer_x;
+  final double user_accelerometer_y;
+  final double user_accelerometer_z;
+  final double altitude;
+  final double latitude;
+  final double longitude;
+  final double heading;
+  final double accuracy;
   final DateTime time;
   final DateTime local_time;
   final Measurements measurement_id;
@@ -56,6 +55,8 @@ class PhoneSensorData {
       required this.time,
       required this.local_time,
       required this.measurement_id});
+
+
 
   Map<String, dynamic> toJsonToBackEnd() => {
         "sensorId": sensorId,
@@ -84,25 +85,25 @@ class PhoneSensorData {
   factory PhoneSensorData.fromJson(Map<String, dynamic> json) {
     return PhoneSensorData(
         sensorId: json["sensorId"],
-        gyroscope_x: Decimal.parse(json["gyroscope_x"]),
-        gyroscope_y: Decimal.parse(json["gyroscope_y"]),
-        gyroscope_z: Decimal.parse(json["gyroscope_z"]),
-        magnitometr_x: Decimal.parse(json["magnitometr_x"]),
-        magnitometr_y: Decimal.parse(json["magnitometr_y"]),
-        magnitometr_z: Decimal.parse(json["magnitometr_z"]),
-        accelerometer_x: Decimal.parse(json["accelerometer_x"]),
-        accelerometer_y: Decimal.parse(json["accelerometer_y"]),
-        accelerometer_z: Decimal.parse(json["accelerometer_z"]),
-        user_accelerometer_x: Decimal.parse(json["user_accelerometer_x"]),
-        user_accelerometer_y:Decimal.parse( json["user_accelerometer_y"]),
-        user_accelerometer_z:Decimal.parse( json["user_accelerometer_z"]),
-        altitude:Decimal.parse( json["altitude"]),
-        latitude:Decimal.parse( json["latitude"]),
-        longitude:Decimal.parse( json["longitude"]),
-        heading: Decimal.parse(json["heading"]),
-        accuracy:Decimal.parse( json["accuracy"]),
-        time: json["time"],
-        local_time: json["local_time"],
+        gyroscope_x: (json["gyroscope_x"]),
+        gyroscope_y: json["gyroscope_y"],
+        gyroscope_z: json["gyroscope_z"],
+        magnitometr_x: json["magnitometr_x"],
+        magnitometr_y: json["magnitometr_y"],
+        magnitometr_z: json["magnitometr_z"],
+        accelerometer_x: json["accelerometer_x"],
+        accelerometer_y: json["accelerometer_y"],
+        accelerometer_z: json["accelerometer_z"],
+        user_accelerometer_x: json["user_accelerometer_x"],
+        user_accelerometer_y:json["user_accelerometer_y"],
+        user_accelerometer_z:json["user_accelerometer_z"],
+        altitude:json["altitude"],
+        latitude:json["latitude"],
+        longitude:json["longitude"],
+        heading: json["heading"],
+        accuracy:json["accuracy"],
+        time: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["time"]),
+        local_time: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["local_time"]),
         measurement_id: Measurements.fromJson(json["measurement_id"]));
   }
 }

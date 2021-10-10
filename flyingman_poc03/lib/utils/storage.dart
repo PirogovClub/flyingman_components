@@ -95,7 +95,8 @@ class CounterStorage {
 
   Future<Response> saveToDB(Object objectTSend, String sensorType) async {
     String uuid = Uid().getSensorID("Phone");
-    String jsonStringSample = """{\"sensorId\": \"2c497cf7-7697-4a5c-8cb7-bc1657d88883\",
+    String jsonStringSample =
+        """{\"sensorId\": \"2c497cf7-7697-4a5c-8cb7-bc1657d88883\",
             \"gyroscope_x\": 22.35,
     \"gyroscope_y\": 22.35,
     \"gyroscope_z\": 22.35,
@@ -114,24 +115,36 @@ class CounterStorage {
     \"heading\": 22.35,
     \"accuracy\": 22.35,
     \"measurement_id\": {
-    \"measurement_uuid\": \"""" +  uuid + """\",
+    \"measurement_uuid\": \"""" +
+            uuid +
+            """\",
+    \"user_device_id\":1,
     \"user_id\": {
     \"nick_name\":\"Hello\",
     \"id\": 6,
     \"first_name\":\"FLuY\"
-
+    
   }
     },
   \"time\": \"2021-10-03T09:09:00.403-08:00\",
   \"local_time\": \"2021-10-03T09:09:00.403-08:00\"
  }""";
-    Map<String,dynamic> json = jsonDecode(jsonStringSample);
+
+    print(jsonStringSample);
+    Map<String, dynamic> json = jsonDecode(jsonStringSample);
     PhoneSensorData phoneSensorData = PhoneSensorData.fromJson(json);
-    print(phoneSensorData);
+    print(jsonEncode(phoneSensorData.toJsonToBackEnd(), toEncodable: myEncode).toString());
     return (http.post(Uri.parse('http://69.87.221.132:8080/phonedata/add'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonStringSample));
+        body: jsonEncode(phoneSensorData.toJsonToBackEnd(), toEncodable: myEncode)));
+  }
+
+  dynamic myEncode(dynamic item) {
+    if(item is DateTime) {
+      return item.toIso8601String();
+    }
+    return item;
   }
 }

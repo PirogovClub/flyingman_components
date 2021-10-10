@@ -1,19 +1,20 @@
 import 'package:flyingman_poc03/dto/domain/users.dart';
 
 class Measurements {
-  final int id;
+   int id=0;
 
   final String measurement_uuid;
 
   final UserData user_id;
 
-  final int user_device_id;
+   int user_device_id;
 
-  const Measurements(
-      {required this.id,
+   Measurements(
+      {
       required this.measurement_uuid,
       required this.user_id,
-      required this.user_device_id});
+      required this.user_device_id
+      });
 
   Map<String, dynamic> toJsonToBackEnd() => {
         "id": id,
@@ -24,9 +25,9 @@ class Measurements {
 
   factory Measurements.fromJson(Map<String, dynamic> json) {
     return Measurements(
-      id: json["id"],
+
       measurement_uuid: json["measurement_uuid"],
-      user_id: UserData.fromJson(json["userId"]),
+      user_id: UserData.fromJson(json["user_id"]),
       user_device_id: json["user_device_id"],
     );
   }

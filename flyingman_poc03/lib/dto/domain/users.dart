@@ -1,3 +1,5 @@
+
+
 class UserData {
   final int id;
 
@@ -8,6 +10,6 @@ class UserData {
       };
 
   factory UserData.fromJson(Map<String, dynamic> json) {
-    return UserData(id: json["userId"]);
+    return UserData(id: json["id"]);
   }
 }
