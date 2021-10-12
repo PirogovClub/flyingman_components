@@ -3,9 +3,9 @@ import 'package:flyingman_poc03/dto/domain/users.dart';
 class Measurements {
    int id=0;
 
-  final String measurement_uuid;
+   String measurement_uuid;
 
-  final UserData user_id;
+   UserData user_id;
 
    int user_device_id;
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flyingman_poc03/bluetooth/main_bluetooth_page.dart';
+import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
 import 'package:flyingman_poc03/widgets/get_location.dart';
 import 'package:flyingman_poc03/widgets/listen_location.dart';
@@ -14,11 +15,12 @@ import 'package:flyingman_poc03/utils/states_dto.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(const MyApp());
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+   MyApp({Key? key}) : super(key: key);
+   SensorsContainer sensorsContainer = SensorsContainer();
 
   // This widget is the root of your application.
   @override

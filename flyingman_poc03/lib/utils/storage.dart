@@ -1,12 +1,22 @@
-import 'dart:convert';
-import 'dart:io';
+import 'dart:async';
 
+import 'dart:convert';
+
+import 'dart:io' as io;
+
+import 'package:flutter/services.dart';
+import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
 import 'package:flyingman_poc03/dto/domain/phone_sensor_data.dart';
+import 'package:flyingman_poc03/dto/domain/users.dart';
 import 'package:flyingman_poc03/utils/uid.dart';
-import 'package:http/http.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:uuid/uuid.dart';
+import 'package:location/location.dart';
+
+import 'local_system_time_util.dart';
 
 enum StorageType { internal, external }
 
@@ -14,11 +24,23 @@ class CounterStorage {
   //choose where to store file
   //TODO:make this place more secure
   StorageType storageType = StorageType.external;
+  final Location location = Location();
+  final LocalSystemTimeUtil _localSystemTimeUtil = new LocalSystemTimeUtil();
+
+  String? _error;
+
+
+
+  static StreamSubscription<LocationData>? _locationSubscription;
 
   static String _locationData = "";
 
   set locationData(String value) {
     _locationData = value;
+  }
+
+  CounterStorage() {
+
   }
 
   String get locationData => _locationData;
@@ -35,18 +57,18 @@ class CounterStorage {
     return directory!.path;
   }
 
-  Future<File> get _localFile async {
+  Future<io.File> get _localFile async {
     final path = await _localPath;
-    return File('$path/counter.txt');
+    return io.File('$path/counter.txt');
   }
 
-  Future<File> get _externalFile async {
+  Future<io.File> get _externalFile async {
     final path = await _externalPath;
-    return File('$path/counter.txt');
+    return io.File('$path/counter.txt');
   }
 
-  Future<File> getFile(StorageType storageType) async {
-    Future<File> toReturn;
+  Future<io.File> getFile(StorageType storageType) async {
+    Future<io.File> toReturn;
     switch (storageType) {
       case StorageType.external:
         toReturn = _externalFile;
@@ -72,29 +94,30 @@ class CounterStorage {
     }
   }
 
-  Future<File> writeCounter(int counter) async {
+  Future<io.File> writeCounter(int counter) async {
     final file = await getFile(storageType);
 
     // Write the file
-    return file.writeAsString('$counter', mode: FileMode.append);
+    return file.writeAsString('$counter', mode: io.FileMode.append);
   }
 
-  Future<File> storeData(String string) async {
-    final file = await getFile(storageType);
-    string = string + "\n";
-    // Write the file
-    return file.writeAsString(string, mode: FileMode.append);
-  }
-
-  Future<File> writeStringToFile(String string) async {
+  Future<io.File> storeData(String string) async {
     final file = await getFile(storageType);
     string = string + "\n";
     // Write the file
-    return file.writeAsString(string, mode: FileMode.append);
+    return file.writeAsString(string, mode: io.FileMode.append);
   }
 
-  Future<Response> saveToDB(Object objectTSend, String sensorType) async {
+  Future<io.File> writeStringToFile(String string) async {
+    final file = await getFile(storageType);
+    string = string + "\n";
+    // Write the file
+    return file.writeAsString(string, mode: io.FileMode.append);
+  }
+
+  Future<http.Response> saveToDB(String objectTSend, String sensorType) async {
     String uuid = Uid().getSensorID("Phone");
+    String incomingJson = objectTSend;
     String jsonStringSample =
         """{\"sensorId\": \"2c497cf7-7697-4a5c-8cb7-bc1657d88883\",
             \"gyroscope_x\": 22.35,
@@ -131,18 +154,27 @@ class CounterStorage {
  }""";
 
     print(jsonStringSample);
+    print(incomingJson);
     Map<String, dynamic> json = jsonDecode(jsonStringSample);
-    PhoneSensorData phoneSensorData = PhoneSensorData.fromJson(json);
-    print(jsonEncode(phoneSensorData.toJsonToBackEnd(), toEncodable: myEncode).toString());
+    //PhoneSensorData phoneSensorData = PhoneSensorData.fromJson(json);
+    PhoneSensorData phoneSensorData = SensorsContainer().phoneSensorData;
+
+    phoneSensorData.measurement_id.measurement_uuid = uuid;
+    phoneSensorData.measurement_id.user_device_id = 1;
+    phoneSensorData.measurement_id.user_id = new UserData(id: 6);
+
+    print(jsonEncode(phoneSensorData.toJsonToBackEnd(), toEncodable: myEncode)
+        .toString());
     return (http.post(Uri.parse('http://69.87.221.132:8080/phonedata/add'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(phoneSensorData.toJsonToBackEnd(), toEncodable: myEncode)));
+        body: jsonEncode(phoneSensorData.toJsonToBackEnd(),
+            toEncodable: myEncode)));
   }
 
   dynamic myEncode(dynamic item) {
-    if(item is DateTime) {
+    if (item is DateTime) {
       return item.toIso8601String();
     }
     return item;

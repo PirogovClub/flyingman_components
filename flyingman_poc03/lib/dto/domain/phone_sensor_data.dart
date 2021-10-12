@@ -12,28 +12,28 @@ class PhoneSensorData {
   print(outputDate); // 12/31/2000 11:59 PM <-- MM/dd 12H format*/
 
   final String sensorId;
-  final double gyroscope_x;
-  final double gyroscope_y;
-  final double gyroscope_z;
-  final double magnitometr_x;
-  final double magnitometr_y;
-  final double magnitometr_z;
-  final double accelerometer_x;
-  final double accelerometer_y;
-  final double accelerometer_z;
-  final double user_accelerometer_x;
-  final double user_accelerometer_y;
-  final double user_accelerometer_z;
-  final double altitude;
-  final double latitude;
-  final double longitude;
-  final double heading;
-  final double accuracy;
-  final DateTime time;
-  final DateTime local_time;
+   double gyroscope_x;
+   double gyroscope_y;
+   double gyroscope_z;
+   double magnitometr_x;
+   double magnitometr_y;
+   double magnitometr_z;
+   double accelerometer_x;
+   double accelerometer_y;
+   double accelerometer_z;
+   double user_accelerometer_x;
+   double user_accelerometer_y;
+   double user_accelerometer_z;
+   double altitude;
+   double latitude;
+   double longitude;
+   double heading;
+   double accuracy;
+   DateTime time;
+   DateTime local_time;
   final Measurements measurement_id;
 
-  const PhoneSensorData(
+   PhoneSensorData(
       {required this.sensorId,
       required this.gyroscope_x,
       required this.gyroscope_y,

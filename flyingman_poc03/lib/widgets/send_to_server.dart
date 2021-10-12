@@ -45,7 +45,7 @@ class _SendToServerState extends State<SendToServerWidget> {
     _serverResponse = "";
 
     counterStorage
-        .saveToDB(_counterStorage.locationData, "phonedata")
+        .saveToDB(counterStorage.locationData, "phonedata")
         .then((value) => getBody(value))
         .then((value) => {
               setState(() {

@@ -45,6 +45,7 @@ class _SensorsState extends State<SensorsWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text('Accelerometer: $accelerometer'),
+
               ],
             ),
           ),
@@ -95,6 +96,10 @@ class _SensorsState extends State<SensorsWidget> {
       accelerometerEvents.listen(
         (AccelerometerEvent event) {
           _accelerometerValues = <double>[event.x, event.y, event.z];
+          String _accelerometrJson =  "\"accelerometer_x\": "+event.x.toString()+","+
+              "\"accelerometer_y\": "+event.y.toString()+","+
+              "\"accelerometer_z\": "+event.z.toString()+",";
+
         },
       ),
     );
