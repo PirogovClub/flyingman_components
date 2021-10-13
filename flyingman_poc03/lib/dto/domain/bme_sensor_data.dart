@@ -1,5 +1,5 @@
-
-
+import 'package:flyingman_poc03/dto/domain/mesurments.dart';
+import 'package:flyingman_poc03/dto/domain/users.dart';
 import 'package:flyingman_poc03/utils/uid.dart';
 
 const sensorIdJsonNameFromSensor = "Name";
@@ -9,38 +9,59 @@ const humidityJsonNameFromSensor = "Hm";
 const measurementIdJsonNameFromSensor = "Name";
 const altitudeJsonNameFromSensor = "AltitudeM";
 
+const sensorNameJsonNameFromSensor = "Name";
+const altitudeFJsonNameFromSensor = "AltitudeF";
+
 const sensorIdJsonNameToBackEnd = "sensorId";
 const pressureJsonNameToBackEnd = "temperature";
 const temperatureJsonNameToBackEnd = "pressure";
 const humidityJsonNameToBackEnd = "humidity";
 const measurementIdJsonNameToBackEnd = "measurementId";
 const altitudeJsonNameToBackEnd = "altitude";
+const sensorNameJsonNameToBackEnd = "sensor_name";
+const altitudeFJsonNameToBackEnd = "altitude_f";
 
 class BmeSensorsData {
   final String sensorID;
-  final double pressure;
-  final double temperature;
-  final double humidity;
-  final String measurementId;
-  final double altitude;
+  double pressure;
+  double temperature;
+  double altitude;
+  String sensorName;
+  double altitude_f;
+  double humidity;
+  final Measurements measurement_id;
+  DateTime time;
+  String location;
 
-  const BmeSensorsData(
+  BmeSensorsData(
       {required this.sensorID,
       required this.pressure,
       required this.temperature,
+      required this.altitude,
+      required this.sensorName,
+      required this.altitude_f,
       required this.humidity,
-      required this.measurementId,
-      required this.altitude});
+      required this.measurement_id,
+      required this.time,
+      required this.location});
 
   factory BmeSensorsData.fromJson(Map<String, dynamic> json) {
     return BmeSensorsData(
-      sensorID: Uid().getSensorID(json[sensorIdJsonNameFromSensor] as String),
-      pressure: json[pressureJsonNameFromSensor] as double,
-      temperature: json[temperatureJsonNameFromSensor] as double,
-      humidity: json[humidityJsonNameFromSensor] as double,
-      measurementId: Uid().getSensorID(json[sensorIdJsonNameFromSensor] as String),
-      altitude: json[altitudeJsonNameFromSensor] as double,
-    );
+        sensorID: Uid().getSensorID(json[sensorIdJsonNameFromSensor] as String),
+        pressure: json[pressureJsonNameFromSensor] as double,
+        temperature: json[temperatureJsonNameFromSensor] as double,
+        altitude: json[altitudeJsonNameFromSensor] as double,
+        sensorName: json[sensorNameJsonNameFromSensor] as String,
+        altitude_f: json[altitudeFJsonNameFromSensor] as double,
+        humidity: json[humidityJsonNameFromSensor] as double,
+        measurement_id: Measurements(
+          user_id: new UserData(id: 6),
+          user_device_id: 1,
+          measurement_uuid: Uid().getSensorID(
+              "Phone" + DateTime.now().millisecondsSinceEpoch.toString()),
+        ),
+        time: DateTime.now(),
+        location: "");
   }
 
   Map<String, dynamic> toJsonFromSensor() => {
@@ -48,16 +69,20 @@ class BmeSensorsData {
         pressureJsonNameFromSensor: pressure,
         temperatureJsonNameFromSensor: temperature,
         humidityJsonNameFromSensor: humidity,
-        measurementIdJsonNameFromSensor: measurementId,
+        measurementIdJsonNameFromSensor: measurement_id,
         altitudeJsonNameFromSensor: altitude,
       };
 
   Map<String, dynamic> toJsonToBackEnd() => {
-        sensorIdJsonNameFromSensor: sensorID,
-        pressureJsonNameFromSensor: pressure,
-        temperatureJsonNameFromSensor: temperature,
-        humidityJsonNameFromSensor: humidity,
-        measurementIdJsonNameFromSensor: measurementId,
-        altitudeJsonNameFromSensor: altitude,
+        sensorIdJsonNameToBackEnd: sensorID,
+        pressureJsonNameToBackEnd: pressure,
+        temperatureJsonNameToBackEnd: temperature,
+        altitudeJsonNameToBackEnd: altitude,
+        sensorNameJsonNameToBackEnd: sensorName,
+        altitudeFJsonNameToBackEnd: altitude_f,
+        humidityJsonNameToBackEnd: humidity,
+        "time": time,
+        "measurement_id": measurement_id.toJsonToBackEnd(),
+        "location": location,
       };
 }

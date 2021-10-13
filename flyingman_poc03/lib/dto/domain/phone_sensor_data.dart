@@ -12,28 +12,28 @@ class PhoneSensorData {
   print(outputDate); // 12/31/2000 11:59 PM <-- MM/dd 12H format*/
 
   final String sensorId;
-   double gyroscope_x;
-   double gyroscope_y;
-   double gyroscope_z;
-   double magnitometr_x;
-   double magnitometr_y;
-   double magnitometr_z;
-   double accelerometer_x;
-   double accelerometer_y;
-   double accelerometer_z;
-   double user_accelerometer_x;
-   double user_accelerometer_y;
-   double user_accelerometer_z;
-   double altitude;
-   double latitude;
-   double longitude;
-   double heading;
-   double accuracy;
-   DateTime time;
-   DateTime local_time;
+  double gyroscope_x;
+  double gyroscope_y;
+  double gyroscope_z;
+  double magnitometr_x;
+  double magnitometr_y;
+  double magnitometr_z;
+  double accelerometer_x;
+  double accelerometer_y;
+  double accelerometer_z;
+  double user_accelerometer_x;
+  double user_accelerometer_y;
+  double user_accelerometer_z;
+  double altitude;
+  double latitude;
+  double longitude;
+  double heading;
+  double accuracy;
+  DateTime time;
+  DateTime local_time;
   final Measurements measurement_id;
 
-   PhoneSensorData(
+  PhoneSensorData(
       {required this.sensorId,
       required this.gyroscope_x,
       required this.gyroscope_y,
@@ -55,8 +55,6 @@ class PhoneSensorData {
       required this.time,
       required this.local_time,
       required this.measurement_id});
-
-
 
   Map<String, dynamic> toJsonToBackEnd() => {
         "sensorId": sensorId,
@@ -95,15 +93,16 @@ class PhoneSensorData {
         accelerometer_y: json["accelerometer_y"],
         accelerometer_z: json["accelerometer_z"],
         user_accelerometer_x: json["user_accelerometer_x"],
-        user_accelerometer_y:json["user_accelerometer_y"],
-        user_accelerometer_z:json["user_accelerometer_z"],
-        altitude:json["altitude"],
-        latitude:json["latitude"],
-        longitude:json["longitude"],
+        user_accelerometer_y: json["user_accelerometer_y"],
+        user_accelerometer_z: json["user_accelerometer_z"],
+        altitude: json["altitude"],
+        latitude: json["latitude"],
+        longitude: json["longitude"],
         heading: json["heading"],
-        accuracy:json["accuracy"],
+        accuracy: json["accuracy"],
         time: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["time"]),
-        local_time: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["local_time"]),
+        local_time:
+            DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["local_time"]),
         measurement_id: Measurements.fromJson(json["measurement_id"]));
   }
 }

@@ -35,7 +35,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
   String? _error;
   String _locationText = "";
 
-  SensorsContainer sensorsContainer = SensorsContainer();
+  PhoneSensorsContainer sensorsContainer = PhoneSensorsContainer();
 
   Future<void> _listenLocation() async {
     CounterStorage counterStorage = new CounterStorage();
@@ -97,7 +97,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
           sensorsContainer.phoneSensorData.accuracy = _locationResult.accuracy!;
           sensorsContainer.phoneSensorData.time = new DateTime.now();
           counterStorage
-              .saveToDB(counterStorage.locationData, "phonedata")
+              .savePhoneDataToDB(counterStorage.locationData, "phonedata")
               .then((value) => getBody(value))
               .then((value) =>
           {

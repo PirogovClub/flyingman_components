@@ -10,6 +10,7 @@ import 'package:flyingman_poc03/utils/local_system_time_util.dart';
 import 'package:flyingman_poc03/utils/states_dto.dart';
 import 'package:flyingman_poc03/utils/storage.dart';
 import 'package:dialog_loader/dialog_loader.dart';
+import 'package:http/http.dart';
 
 class ChatPage extends StatefulWidget {
   final BluetoothDevice server;
@@ -28,14 +29,13 @@ class _Message {
 }
 
 class _ChatPage extends State<ChatPage> {
-
-
   static final clientID = 0;
   BluetoothConnection? connection;
   LocalSystemTimeUtil _localSystemTimeUtil = new LocalSystemTimeUtil();
-  CounterStorage _counterStorage = new CounterStorage();
+
   List<_Message> messages = List<_Message>.empty(growable: true);
   String _messageBuffer = '';
+  String _messageNewBuffer = '';
 
   final TextEditingController textEditingController =
   new TextEditingController();
@@ -99,12 +99,18 @@ class _ChatPage extends State<ChatPage> {
       return Row(
         children: <Widget>[
           Container(
-            child: Text(
-                    (text) {
-                  return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
-                }(_message.text.trim()),
-                style: TextStyle(color: Colors.white)),
-
+            child: Column(children: <Widget>[
+              Text(
+                      (text) {
+                    return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
+                  }(_message.text.trim()),
+                  style: TextStyle(color: Colors.white)),
+              Text(
+                      (text) {
+                    return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
+                  }("Some Timer Here"),
+                  style: TextStyle(color: Colors.white))
+            ]),
             padding: EdgeInsets.all(12.0),
             margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
             width: 252.0,
@@ -113,7 +119,6 @@ class _ChatPage extends State<ChatPage> {
                 _message.whom == clientID ? Colors.blueAccent : Colors.grey,
                 borderRadius: BorderRadius.circular(20.0)),
           ),
-
         ],
         mainAxisAlignment: _message.whom == clientID
             ? MainAxisAlignment.end
@@ -174,35 +179,17 @@ class _ChatPage extends State<ChatPage> {
     );
   }
 
+
   _onDataReceived(Uint8List data) async {
+    String getBody(Response value) {
+      print("body:" + value.body.toString());
+      return value.body.toString();
+    }
+
     String response = "";
-    /* // Allocate buffer for parsed data
-    int backspacesCounter = 0;
-    data.forEach((byte) {
-      if (byte == 8 || byte == 127) {
-        backspacesCounter++;
-      }
-    });
-    Uint8List buffer = Uint8List(data.length - backspacesCounter);
-    int bufferIndex = buffer.length;
-
-    // Apply backspace control character
-    backspacesCounter = 0;
-    for (int i = data.length - 1; i >= 0; i--) {
-      if (data[i] == 8 || data[i] == 127) {
-        backspacesCounter++;
-      } else {
-        if (backspacesCounter > 0) {
-          backspacesCounter--;
-        } else {
-          buffer[--bufferIndex] = data[i];
-        }
-      }
-    }*/
-
-    // Create message if there is new line character
+    CounterStorage counterStorage = CounterStorage();
+    // Create message if there is end of object
     String dataString = String.fromCharCodes(data);
-
     //manage case when \r and \n came in different packages
     if (dataString.indexOf("\n") == 0) {
       dataString = "\r" + dataString;
@@ -222,23 +209,31 @@ class _ChatPage extends State<ChatPage> {
             _messageBuffer.substring(0, _messageBuffer.length - 1) +
                 ",\"Time\":\"" +
                 _localSystemTimeUtil.getSystemTime() +
-                "\"," +
+                "\"" +
                 ",\"loc\":\"" +
-                _counterStorage.locationData +
-                "\"}_";
+                "\"}";
+        try {
+          BmeSensorsData bmeSensorsData =
+          BmeSensorsData.fromJson(jsonDecode(_messageBuffer));
 
 
-        if (StateDto.saveToFile) {
-          _counterStorage.saveToDB(_messageBuffer, "sensordata").then((
-              value) => {
+          if (StateDto.saveToFile) {
+            print(_messageBuffer);
 
-                  messages.add(_Message(1, "Request sent" + _messageBuffer))
-
-          });
-          _messageBuffer = _messageBuffer;
-          //_counterStorage.saveToDB(_counterStorage.locationData,"phonedata");
+            counterStorage
+                .saveSensorDataToDB(bmeSensorsData, "sensordata")
+                .then((value) => getBody(value))
+                .then((value) =>
+                setState(() {
+                  messages.add(
+                      _Message(1, "Response recived " + value.toString()));
+                }));
+            _messageBuffer = _messageBuffer;
+          }
+        } on FormatException {
+          _messageBuffer = "";
+          print("broken string found from sensor");
         }
-
 
         setState(() {
           messages.add(_Message(1, _messageBuffer));
@@ -248,33 +243,9 @@ class _ChatPage extends State<ChatPage> {
         }
 
         _messageBuffer = "";
-        //adding json
-        //var parseBmeSensorsData2 = parseBmeSensorsData(textToAdd);
-        // messages.add(_Message(1, parseBmeSensorsData2.toString()));
       }
       _messageBuffer = messageparts[messageparts.length - 1];
     }
-    /*if (~index != 0) {
-      setState(() {
-        String textToAdd = backspacesCounter > 0
-            ? _messageBuffer.substring(
-                0, _messageBuffer.length - backspacesCounter)
-            : _messageBuffer + dataString.substring(0, index);
-        messages.add(
-          _Message(
-            1,
-            textToAdd,
-          ),
-        );*/
-
-    /*  _messageBuffer = dataString.substring(index);
-      });
-    } else {
-      _messageBuffer = (backspacesCounter > 0
-          ? _messageBuffer.substring(
-              0, _messageBuffer.length - backspacesCounter)
-          : _messageBuffer + dataString);
-    }*/
   }
 
   void _sendMessage(String text) async {

@@ -6,6 +6,7 @@ import 'dart:io' as io;
 
 import 'package:flutter/services.dart';
 import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
+import 'package:flyingman_poc03/dto/domain/bme_sensor_data.dart';
 import 'package:flyingman_poc03/dto/domain/phone_sensor_data.dart';
 import 'package:flyingman_poc03/dto/domain/users.dart';
 import 'package:flyingman_poc03/utils/uid.dart';
@@ -29,8 +30,6 @@ class CounterStorage {
 
   String? _error;
 
-
-
   static StreamSubscription<LocationData>? _locationSubscription;
 
   static String _locationData = "";
@@ -39,9 +38,7 @@ class CounterStorage {
     _locationData = value;
   }
 
-  CounterStorage() {
-
-  }
+  CounterStorage() {}
 
   String get locationData => _locationData;
 
@@ -115,50 +112,11 @@ class CounterStorage {
     return file.writeAsString(string, mode: io.FileMode.append);
   }
 
-  Future<http.Response> saveToDB(String objectTSend, String sensorType) async {
-    String uuid = Uid().getSensorID("Phone");
-    String incomingJson = objectTSend;
-    String jsonStringSample =
-        """{\"sensorId\": \"2c497cf7-7697-4a5c-8cb7-bc1657d88883\",
-            \"gyroscope_x\": 22.35,
-    \"gyroscope_y\": 22.35,
-    \"gyroscope_z\": 22.35,
-    \"magnitometr_x\": 22.35,
-    \"magnitometr_y\": 22.35,
-    \"magnitometr_z\": 22.35,
-    \"accelerometer_x\": 22.35,
-    \"accelerometer_y\": 22.35,
-    \"accelerometer_z\": 22.35,
-    \"user_accelerometer_x\": 22.35,
-    \"user_accelerometer_y\": 22.35,
-    \"user_accelerometer_z\": 22.35,
-    \"altitude\": 22.35,
-    \"latitude\": 22.35,
-    \"longitude\": 22.35,
-    \"heading\": 22.35,
-    \"accuracy\": 22.35,
-    \"measurement_id\": {
-    \"measurement_uuid\": \"""" +
-            uuid +
-            """\",
-    \"user_device_id\":1,
-    \"user_id\": {
-    \"nick_name\":\"Hello\",
-    \"id\": 6,
-    \"first_name\":\"FLuY\"
-    
-  }
-    },
-  \"time\": \"2021-10-03T09:09:00.403-08:00\",
-  \"local_time\": \"2021-10-03T09:09:00.403-08:00\"
- }""";
-
-    print(jsonStringSample);
-    print(incomingJson);
-    Map<String, dynamic> json = jsonDecode(jsonStringSample);
-    //PhoneSensorData phoneSensorData = PhoneSensorData.fromJson(json);
-    PhoneSensorData phoneSensorData = SensorsContainer().phoneSensorData;
-
+  Future<http.Response> savePhoneDataToDB(
+      String objectTSend, String sensorType) async {
+    String uuid = Uid().getSensorID(
+        "Phone" + DateTime.now().millisecondsSinceEpoch.toString());
+    PhoneSensorData phoneSensorData = PhoneSensorsContainer().phoneSensorData;
     phoneSensorData.measurement_id.measurement_uuid = uuid;
     phoneSensorData.measurement_id.user_device_id = 1;
     phoneSensorData.measurement_id.user_id = new UserData(id: 6);
@@ -170,6 +128,21 @@ class CounterStorage {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(phoneSensorData.toJsonToBackEnd(),
+            toEncodable: myEncode)));
+  }
+
+  Future<http.Response> saveSensorDataToDB(
+      BmeSensorsData bmeSensorsData, String sensorType) async {
+    String uuid = Uid().getSensorID(
+        "Phone" + DateTime.now().millisecondsSinceEpoch.toString());
+
+    print("sending:"+jsonEncode(bmeSensorsData.toJsonToBackEnd(), toEncodable: myEncode)
+        .toString());
+    return (http.post(Uri.parse('http://69.87.221.132:8080/sensordata/add'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bmeSensorsData.toJsonToBackEnd(),
             toEncodable: myEncode)));
   }
 

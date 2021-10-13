@@ -30,8 +30,19 @@ class _SendToServerState extends State<SendToServerWidget> {
             Container(
               margin: const EdgeInsets.only(right: 42),
               child: ElevatedButton(
-                child: const Text('SendQuery'),
-                onPressed: _sendQuery,
+                child: const Text('Send Phone Data'),
+                onPressed: _sendPhoneDataQuery,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(right: 42),
+              child: ElevatedButton(
+                child: const Text('Send Sensor Data'),
+                onPressed: _sendPhoneDataQuery,
               ),
             ),
           ],
@@ -40,12 +51,12 @@ class _SendToServerState extends State<SendToServerWidget> {
     );
   }
 
-  Future<void> _sendQuery() async {
+  Future<void> _sendPhoneDataQuery() async {
     CounterStorage counterStorage = new CounterStorage();
     _serverResponse = "";
 
     counterStorage
-        .saveToDB(counterStorage.locationData, "phonedata")
+        .savePhoneDataToDB(counterStorage.locationData, "phonedata")
         .then((value) => getBody(value))
         .then((value) => {
               setState(() {

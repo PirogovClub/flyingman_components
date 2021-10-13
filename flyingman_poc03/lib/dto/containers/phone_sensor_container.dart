@@ -3,7 +3,7 @@ import 'package:flyingman_poc03/dto/domain/mesurments.dart';
 import 'package:flyingman_poc03/dto/domain/phone_sensor_data.dart';
 import 'package:flyingman_poc03/dto/domain/users.dart';
 
-class SensorsContainer{
+class PhoneSensorsContainer{
 
   static PhoneSensorData _phoneSensorData = PhoneSensorData(
   sensorId: "2c497cf7-7697-4a5c-8cb7-bc1657d88883",

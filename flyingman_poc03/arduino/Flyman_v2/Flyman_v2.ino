@@ -78,14 +78,14 @@ void setup() {
  
     for (uint8_t t=0; t<4; t++) {
       tcaselect(t);
-      Serial.print("TCA Port #"); Serial.println(t);
+      //Serial.print("TCA Port #"); Serial.println(t);
  
       for (uint8_t addr = 0; addr<=127; addr++) {
         if (addr == TCAADDR) continue;
       
         uint8_t data;
         if (! twi_writeTo(addr, &data, 0, 1, 1)) {
-           Serial.print("Found I2C 0x");  Serial.println(addr,HEX); 
+           //Serial.print("Found I2C 0x");  Serial.println(addr,HEX); 
         }
       }
     }

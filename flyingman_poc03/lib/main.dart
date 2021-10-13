@@ -20,7 +20,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
    MyApp({Key? key}) : super(key: key);
-   SensorsContainer sensorsContainer = SensorsContainer();
+   PhoneSensorsContainer phoneSensorsContainer = PhoneSensorsContainer();
 
   // This widget is the root of your application.
   @override
