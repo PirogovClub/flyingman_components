@@ -14,7 +14,7 @@ class SendToServerWidget extends StatefulWidget {
 }
 
 class _SendToServerState extends State<SendToServerWidget> {
-  CounterStorage _counterStorage = new CounterStorage();
+  InfoStorage _counterStorage = new InfoStorage();
   var _serverResponse;
   LocalSystemTimeUtil _localSystemTimeUtil = new LocalSystemTimeUtil();
 
@@ -52,7 +52,7 @@ class _SendToServerState extends State<SendToServerWidget> {
   }
 
   Future<void> _sendPhoneDataQuery() async {
-    CounterStorage counterStorage = new CounterStorage();
+    InfoStorage counterStorage = new InfoStorage();
     _serverResponse = "";
 
     counterStorage

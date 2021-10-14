@@ -187,7 +187,7 @@ class _ChatPage extends State<ChatPage> {
     }
 
     String response = "";
-    CounterStorage counterStorage = CounterStorage();
+    InfoStorage counterStorage = InfoStorage();
     // Create message if there is end of object
     String dataString = String.fromCharCodes(data);
     //manage case when \r and \n came in different packages

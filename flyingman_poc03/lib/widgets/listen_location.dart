@@ -1,23 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
-import 'package:flyingman_poc03/dto/domain/mesurments.dart';
-import 'package:flyingman_poc03/dto/domain/phone_sensor_data.dart';
-import 'package:flyingman_poc03/dto/domain/users.dart';
-import 'package:flyingman_poc03/main.dart';
 import 'package:flyingman_poc03/utils/local_system_time_util.dart';
-import 'package:flyingman_poc03/utils/states_dto.dart';
-import 'package:flyingman_poc03/utils/states_dto.dart';
 import 'package:flyingman_poc03/utils/storage.dart';
 import 'package:http/http.dart';
-import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
-import 'clock.dart';
 
 class ListenLocationWidget extends StatefulWidget {
   const ListenLocationWidget({Key? key}) : super(key: key);
@@ -29,7 +20,7 @@ class ListenLocationWidget extends StatefulWidget {
 class _ListenLocationState extends State<ListenLocationWidget> {
   final Location location = Location();
   LocalSystemTimeUtil _localSystemTimeUtil = new LocalSystemTimeUtil();
-  CounterStorage _counterStorage = new CounterStorage();
+  InfoStorage _counterStorage = new InfoStorage();
   LocationData? _location;
   StreamSubscription<LocationData>? _locationSubscription;
   String? _error;
@@ -38,7 +29,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
   PhoneSensorsContainer sensorsContainer = PhoneSensorsContainer();
 
   Future<void> _listenLocation() async {
-    CounterStorage counterStorage = new CounterStorage();
+    InfoStorage counterStorage = new InfoStorage();
     List<StreamSubscription> _streamSubscriptions =
     <StreamSubscription<dynamic>>[];
     _streamSubscriptions.add(

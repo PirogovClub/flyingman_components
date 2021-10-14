@@ -18,10 +18,11 @@ import 'package:uuid/uuid.dart';
 import 'package:location/location.dart';
 
 import 'local_system_time_util.dart';
+import 'message_buffer/sensor_message.dart';
 
 enum StorageType { internal, external }
 
-class CounterStorage {
+class InfoStorage {
   //choose where to store file
   //TODO:make this place more secure
   StorageType storageType = StorageType.external;
@@ -38,7 +39,7 @@ class CounterStorage {
     _locationData = value;
   }
 
-  CounterStorage() {}
+  InfoStorage() {}
 
   String get locationData => _locationData;
 
@@ -56,12 +57,21 @@ class CounterStorage {
 
   Future<io.File> get _localFile async {
     final path = await _localPath;
-    return io.File('$path/counter.txt');
+    return io.File('$path/messagestorage');
   }
 
   Future<io.File> get _externalFile async {
     final path = await _externalPath;
-    return io.File('$path/counter.txt');
+    return io.File('$path/messagestorage');
+  }
+
+  Future<String> getFilePath() async {
+    switch (storageType) {
+      case StorageType.external:
+        return await _externalPath;
+      case StorageType.internal:
+        return await _localPath;
+    }
   }
 
   Future<io.File> getFile(StorageType storageType) async {
@@ -131,13 +141,27 @@ class CounterStorage {
             toEncodable: myEncode)));
   }
 
+  Future<http.Response> saveSensorMessageToServer(
+      SensorMessage sensorMessage) async {
+    print(jsonEncode(sensorMessage.messageBody, toEncodable: myEncode)
+        .toString());
+    return (http
+        .post(Uri.parse(sensorMessage.endpoint),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(sensorMessage.messageBody, toEncodable: myEncode))
+        .timeout(const Duration(seconds: 30)));
+  }
+
   Future<http.Response> saveSensorDataToDB(
       BmeSensorsData bmeSensorsData, String sensorType) async {
     String uuid = Uid().getSensorID(
         "Phone" + DateTime.now().millisecondsSinceEpoch.toString());
 
-    print("sending:"+jsonEncode(bmeSensorsData.toJsonToBackEnd(), toEncodable: myEncode)
-        .toString());
+    print("sending:" +
+        jsonEncode(bmeSensorsData.toJsonToBackEnd(), toEncodable: myEncode)
+            .toString());
     return (http.post(Uri.parse('http://69.87.221.132:8080/sensordata/add'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',

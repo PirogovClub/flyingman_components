@@ -1,4 +1,5 @@
 import 'package:flyingman_poc03/dto/domain/mesurments.dart';
+import 'package:flyingman_poc03/dto/domain/sensor_data.dart';
 import 'package:flyingman_poc03/dto/domain/users.dart';
 import 'package:flyingman_poc03/utils/uid.dart';
 
@@ -21,7 +22,7 @@ const altitudeJsonNameToBackEnd = "altitude";
 const sensorNameJsonNameToBackEnd = "sensor_name";
 const altitudeFJsonNameToBackEnd = "altitude_f";
 
-class BmeSensorsData {
+class BmeSensorsData implements SensorData {
   final String sensorID;
   double pressure;
   double temperature;
@@ -64,6 +65,7 @@ class BmeSensorsData {
         location: "");
   }
 
+
   Map<String, dynamic> toJsonFromSensor() => {
         sensorIdJsonNameFromSensor: sensorID,
         pressureJsonNameFromSensor: pressure,
@@ -86,3 +88,5 @@ class BmeSensorsData {
         "location": location,
       };
 }
+
+

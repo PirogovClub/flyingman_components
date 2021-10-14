@@ -1,8 +1,9 @@
 import 'package:decimal/decimal.dart';
+import 'package:flyingman_poc03/dto/domain/sensor_data.dart';
 import 'package:intl/intl.dart';
 import 'mesurments.dart';
 
-class PhoneSensorData {
+class PhoneSensorData implements SensorData {
   /*var inputFormat = DateFormat('dd/MM/yyyy HH:mm');
   var inputDate = inputFormat.parse('31/12/2000 23:59'); // <-- dd/MM 24H format
 
