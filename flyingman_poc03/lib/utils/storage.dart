@@ -143,16 +143,17 @@ class InfoStorage {
 
   Future<http.Response> saveSensorMessageToServer(
       SensorMessage sensorMessage) async {
-    print(jsonEncode(sensorMessage.messageBody, toEncodable: myEncode)
-        .toString());
+    print("SensorMessageToServer:"+ sensorMessage.messageBody);
     return (http
         .post(Uri.parse(sensorMessage.endpoint),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
-            body: jsonEncode(sensorMessage.messageBody, toEncodable: myEncode))
-        .timeout(const Duration(seconds: 30)));
+            body: sensorMessage.messageBody));
+    // body: jsonEncode(sensorMessage.messageBody, toEncodable: myEncode).toString()));
   }
+
+
 
   Future<http.Response> saveSensorDataToDB(
       BmeSensorsData bmeSensorsData, String sensorType) async {
@@ -170,7 +171,7 @@ class InfoStorage {
             toEncodable: myEncode)));
   }
 
-  dynamic myEncode(dynamic item) {
+  static dynamic myEncode(dynamic item) {
     if (item is DateTime) {
       return item.toIso8601String();
     }

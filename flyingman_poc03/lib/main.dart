@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flyingman_poc03/bluetooth/main_bluetooth_page.dart';
 import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
+import 'package:flyingman_poc03/utils/message_buffer/message_buffer.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
 import 'package:flyingman_poc03/widgets/get_location.dart';
 import 'package:flyingman_poc03/widgets/listen_location.dart';
@@ -21,6 +22,7 @@ void main() {
 class MyApp extends StatelessWidget {
    MyApp({Key? key}) : super(key: key);
    PhoneSensorsContainer phoneSensorsContainer = PhoneSensorsContainer();
+    static  MessageBuffer messageBuffer =  MessageBuffer();
 
   // This widget is the root of your application.
   @override
@@ -46,6 +48,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+
+
 
   final _streamSubscriptions = <StreamSubscription<dynamic>>[];
   Color headerIconColor = Colors.white;
@@ -132,7 +136,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
+          await MyApp.messageBuffer.init();
           setState(() {
             _changeRecordingStatus();
           });

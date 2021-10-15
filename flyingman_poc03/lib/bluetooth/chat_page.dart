@@ -6,11 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flyingman_poc03/dto/domain/bme_sensor_data.dart';
 import 'package:flyingman_poc03/dto/parsers/bme_sensor_parser.dart';
+import 'package:flyingman_poc03/main.dart';
 import 'package:flyingman_poc03/utils/local_system_time_util.dart';
+import 'package:flyingman_poc03/utils/message_buffer/sensor_message.dart';
 import 'package:flyingman_poc03/utils/states_dto.dart';
 import 'package:flyingman_poc03/utils/storage.dart';
 import 'package:dialog_loader/dialog_loader.dart';
 import 'package:http/http.dart';
+
+import '../main.dart';
 
 class ChatPage extends StatefulWidget {
   final BluetoothDevice server;
@@ -38,7 +42,7 @@ class _ChatPage extends State<ChatPage> {
   String _messageNewBuffer = '';
 
   final TextEditingController textEditingController =
-  new TextEditingController();
+      new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
 
   bool isConnecting = true;
@@ -101,12 +105,12 @@ class _ChatPage extends State<ChatPage> {
           Container(
             child: Column(children: <Widget>[
               Text(
-                      (text) {
+                  (text) {
                     return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
                   }(_message.text.trim()),
                   style: TextStyle(color: Colors.white)),
               Text(
-                      (text) {
+                  (text) {
                     return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
                   }("Some Timer Here"),
                   style: TextStyle(color: Colors.white))
@@ -116,7 +120,7 @@ class _ChatPage extends State<ChatPage> {
             width: 252.0,
             decoration: BoxDecoration(
                 color:
-                _message.whom == clientID ? Colors.blueAccent : Colors.grey,
+                    _message.whom == clientID ? Colors.blueAccent : Colors.grey,
                 borderRadius: BorderRadius.circular(20.0)),
           ),
         ],
@@ -132,8 +136,8 @@ class _ChatPage extends State<ChatPage> {
           title: (isConnecting
               ? Text('Connecting chat to ' + serverName + '...')
               : isConnected
-              ? Text('Live chat with ' + serverName)
-              : Text('Chat log with ' + serverName))),
+                  ? Text('Live chat with ' + serverName)
+                  : Text('Chat log with ' + serverName))),
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -155,8 +159,8 @@ class _ChatPage extends State<ChatPage> {
                         hintText: isConnecting
                             ? 'Wait until connected...'
                             : isConnected
-                            ? 'Type your message...'
-                            : 'Chat got disconnected',
+                                ? 'Type your message...'
+                                : 'Chat got disconnected',
                         hintStyle: const TextStyle(color: Colors.grey),
                       ),
                       enabled: isConnected,
@@ -178,7 +182,6 @@ class _ChatPage extends State<ChatPage> {
       ),
     );
   }
-
 
   _onDataReceived(Uint8List data) async {
     String getBody(Response value) {
@@ -214,20 +217,25 @@ class _ChatPage extends State<ChatPage> {
                 "\"}";
         try {
           BmeSensorsData bmeSensorsData =
-          BmeSensorsData.fromJson(jsonDecode(_messageBuffer));
-
+              BmeSensorsData.fromJson(jsonDecode(_messageBuffer));
 
           if (StateDto.saveToFile) {
             print(_messageBuffer);
-
-            counterStorage
-                .saveSensorDataToDB(bmeSensorsData, "sensordata")
+            MyApp.messageBuffer
+                .addMessageToBuffer(SensorMessage(
+                    id: 0,
+                    messageBody: jsonEncode(bmeSensorsData.toJsonToBackEnd(), toEncodable: InfoStorage.myEncode)
+                        .toString(),
+                    done: false,
+                    endpoint: "http://69.87.221.132:8080/sensordata/add",
+                    timeAdded: DateTime.now(),
+                    timeLastRetry: DateTime.now(),
+                    messageType: MessageType.bme))
                 .then((value) => getBody(value))
-                .then((value) =>
-                setState(() {
-                  messages.add(
-                      _Message(1, "Response recived " + value.toString()));
-                }));
+                .then((value) => setState(() {
+                      messages.add(
+                          _Message(1, "Response recived " + value.toString()));
+                    }));
             _messageBuffer = _messageBuffer;
           }
         } on FormatException {

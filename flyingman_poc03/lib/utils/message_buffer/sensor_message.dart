@@ -14,11 +14,14 @@ class SensorMessage {
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
       columnMessageBody: messageBody,
-      columnDone: done == true ? 1 : 0
+      columnDone: done == true ? 1 : 0,
+      columnEndPoint: endpoint,
+      columnTimeAdded: timeAdded.toString(),
+      columnTimeLastRetry: timeLastRetry.toString(),
+      columnMessageType: 'messageType'
     };
-    map[columnId] = id;
+    map[columnId] = null;
     return map;
-
   }
 
   SensorMessage markAsPhoneSensor() {
@@ -44,7 +47,7 @@ class SensorMessage {
   factory SensorMessage.fromMap(Map<String, Object?> map) {
     return SensorMessage(
         id: int.parse(map[columnId].toString()),
-        messageBody: map[columnMessageBody].toString(),
+        messageBody: map[columnMessageBody] as String,
         done: (map[columnDone] == 1),
         endpoint: map[columnEndPoint].toString(),
         timeLastRetry: DateTime.parse(map[columnTimeLastRetry].toString()),

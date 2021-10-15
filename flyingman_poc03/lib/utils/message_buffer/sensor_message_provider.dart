@@ -3,11 +3,8 @@ import 'package:sqflite/sqflite.dart';
 
 import 'constants.dart';
 
-
-
-
 class SensorMessageProvider {
-  late Database db;
+  Database? db;
 
   Future open(String path) async {
     db = await openDatabase(path, version: 1,
@@ -18,18 +15,21 @@ create table $tableMessages (
   $columnMessageBody text not null,
   $columnTimeAdded text not null,
   $columnTimeLastRetry text not null,
+  $columnEndPoint text not null,
+  $columnMessageType text not null,
   $columnDone integer not null)
 ''');
     });
   }
 
   Future<SensorMessage> insert(SensorMessage sensorMessage) async {
-    sensorMessage.id = await db.insert(tableMessages, sensorMessage.toMap());
+
+    sensorMessage.id = await db!.insert(tableMessages, sensorMessage.toMap());
     return sensorMessage;
   }
 
   Future<SensorMessage?> getSensorMessage(int id) async {
-    List<Map<String, Object?>> maps = await db.query(tableMessages,
+    List<Map<String, Object?>> maps = await db!.query(tableMessages,
         columns: [columnId, columnDone, columnMessageBody],
         where: '$columnId = ?',
         whereArgs: [id]);
@@ -39,15 +39,37 @@ create table $tableMessages (
     return null;
   }
 
+  Future<List<SensorMessage>> getAllSensorMessages() async {
+    List<SensorMessage> listToReturn = [];
+    List<Map<String, Object?>> maps = await db!.query(tableMessages,
+        columns: [
+          columnId,
+          columnDone,
+          columnMessageBody,
+          columnEndPoint,
+          columnTimeAdded,
+          columnTimeLastRetry,
+          columnMessageType
+        ],
+        where: '$columnId = ?',
+        whereArgs: ["*"]);
+    if (maps.isNotEmpty) {
+      for (var sensor in maps) {
+        listToReturn.add(SensorMessage.fromMap(sensor));
+      }
+    }
+    return listToReturn;
+  }
+
   Future<int> delete(int id) async {
-    return await db
+    return await db!
         .delete(tableMessages, where: '$columnId = ?', whereArgs: [id]);
   }
 
   Future<int> update(SensorMessage sensorMessage) async {
-    return await db.update(tableMessages, sensorMessage.toMap(),
+    return await db!.update(tableMessages, sensorMessage.toMap(),
         where: '$columnId = ?', whereArgs: [sensorMessage.id]);
   }
 
-  Future close() async => db.close();
+  Future close() async => db!.close();
 }
