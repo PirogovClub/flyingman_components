@@ -18,8 +18,6 @@ class MessageBuffer {
   final InfoStorage _infoStorage = InfoStorage();
 
   MessageBuffer()  {
-
-
   }
 
   MessageBuffer returnThis(){
@@ -33,6 +31,11 @@ class MessageBuffer {
     Timer.periodic(Duration(minutes: 3), (timer) {
       resendAllMessages();
     });
+    return this;
+  }
+
+  Future<MessageBuffer> close()  async {
+    await _sensorMessageProvider.close();
     return this;
   }
 

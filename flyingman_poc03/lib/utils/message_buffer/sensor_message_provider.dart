@@ -23,7 +23,6 @@ create table $tableMessages (
   }
 
   Future<SensorMessage> insert(SensorMessage sensorMessage) async {
-
     sensorMessage.id = await db!.insert(tableMessages, sensorMessage.toMap());
     return sensorMessage;
   }

@@ -6,6 +6,7 @@ import 'package:flyingman_poc03/bluetooth/main_bluetooth_page.dart';
 import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
 import 'package:flyingman_poc03/utils/message_buffer/message_buffer.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
+import 'package:flyingman_poc03/widgets/clock_page.dart';
 import 'package:flyingman_poc03/widgets/get_location.dart';
 import 'package:flyingman_poc03/widgets/listen_location.dart';
 import 'package:flyingman_poc03/widgets/permission_status_widget.dart';
@@ -13,16 +14,18 @@ import 'package:flyingman_poc03/widgets/send_to_server.dart';
 import 'package:flyingman_poc03/widgets/sensors.dart';
 import 'package:flyingman_poc03/widgets/service_enabled.dart';
 import 'package:flyingman_poc03/utils/states_dto.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:getwidget/getwidget.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-   MyApp({Key? key}) : super(key: key);
-   PhoneSensorsContainer phoneSensorsContainer = PhoneSensorsContainer();
-    static  MessageBuffer messageBuffer =  MessageBuffer();
+  MyApp({Key? key}) : super(key: key);
+  PhoneSensorsContainer phoneSensorsContainer = PhoneSensorsContainer();
+  static MessageBuffer messageBuffer = MessageBuffer();
 
   // This widget is the root of your application.
   @override
@@ -49,29 +52,39 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+    buildSignature: 'Unknown',
+  );
 
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
+  }
 
   final _streamSubscriptions = <StreamSubscription<dynamic>>[];
   Color headerIconColor = Colors.white;
   Color headerIconBgColor = Colors.red;
   double iconSize = 20;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void _changeRecordingStatus() {
+    MyApp.messageBuffer.init().then((value) => {
+          StateDto.setSaveToFile(!StateDto.saveToFile),
+          headerIconColor = StateDto.saveToFile ? Colors.red : Colors.white,
+          headerIconBgColor = StateDto.saveToFile ? Colors.green : Colors.red,
+          iconSize = StateDto.saveToFile ? 30 : 20
+        });
   }
 
-  void _changeRecordingStatus() {
-    StateDto.setSaveToFile(!StateDto.saveToFile);
-    headerIconColor = StateDto.saveToFile ? Colors.red : Colors.white;
-    headerIconBgColor = StateDto.saveToFile ? Colors.green : Colors.red;
-    iconSize = StateDto.saveToFile ? 30 : 20;
+  @override
+  void initState() {
+    super.initState();
+    _initPackageInfo();
   }
 
   @override
@@ -131,11 +144,11 @@ class _MyHomePageState extends State<MyHomePage> {
             Divider(height: 32),
             SendToServerWidget(),
             Divider(height: 32),
-            BlueToothWidget()
+
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      /*floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await MyApp.messageBuffer.init();
           setState(() {
@@ -149,7 +162,22 @@ class _MyHomePageState extends State<MyHomePage> {
           size: iconSize,
         ),
         backgroundColor: headerIconBgColor,
+      ),*/
+      floatingActionButton: GFToggle(
+        onChanged: (val) => {
+          setState(() {
+            _changeRecordingStatus();
+          })
+        },
+        value: StateDto.saveToFile,
+        type: GFToggleType.ios,
+        boxShape: BoxShape.circle,
+        enabledText: 'ON',
+        disabledText: 'OFF',
+        enabledTrackColor: GFColors.DANGER,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
+
       drawer: Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -158,37 +186,48 @@ class _MyHomePageState extends State<MyHomePage> {
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text('Main Menu'),
+              child: Text(_packageInfo.version.isEmpty
+                  ? 'Main Menu'
+                  : ('Main Menu v:' +
+                      _packageInfo.version +
+                      ' Build number:' +
+                      _packageInfo.buildNumber)),
             ),
             ListTile(
-              title: const Text('Permissions'),
+              title: const Text('Clock'),
               onTap: () {
                 // Update the state of the app
                 // ...
                 // Then close the drawer
-                Navigator.of(context).push( MaterialPageRoute(
-                  builder: (context) {
-                    return const PermissionStatusWidget();
-                  },
-                ),);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const DigitalClockPage();
+                    },
+                  ),
+                );
               },
             ),
             ListTile(
-              title: const Text('Item 2'),
+              title: const Text('BlueTooth Tools'),
               onTap: () {
                 // Update the state of the app
                 // ...
                 // Then close the drawer
-                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context){
+                    return BlueToothWidget();
+                  })
+                );
               },
             ),
           ],
         ),
-      ),// This trailing comma makes auto-formatting nicer for build methods.
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -198,5 +237,6 @@ class _MyHomePageState extends State<MyHomePage> {
     for (final subscription in _streamSubscriptions) {
       subscription.cancel();
     }
+    MyApp.messageBuffer.close();
   }
 }
