@@ -5,13 +5,15 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flyingman_poc03/dto/domain/bme_sensor_data.dart';
-import 'package:flyingman_poc03/dto/parsers/bme_sensor_parser.dart';
 import 'package:flyingman_poc03/main.dart';
 import 'package:flyingman_poc03/utils/local_system_time_util.dart';
 import 'package:flyingman_poc03/utils/message_buffer/sensor_message.dart';
 import 'package:flyingman_poc03/utils/states_dto.dart';
 import 'package:flyingman_poc03/utils/storage.dart';
-import 'package:dialog_loader/dialog_loader.dart';
+import 'package:flyingman_poc03/widgets/clock.dart';
+import 'package:getwidget/colors/gf_color.dart';
+import 'package:getwidget/components/toggle/gf_toggle.dart';
+import 'package:getwidget/types/gf_toggle_type.dart';
 import 'package:http/http.dart';
 
 import '../main.dart';
@@ -39,7 +41,6 @@ class _ChatPage extends State<ChatPage> {
 
   List<_Message> messages = List<_Message>.empty(growable: true);
   String _messageBuffer = '';
-  String _messageNewBuffer = '';
 
   final TextEditingController textEditingController =
       new TextEditingController();
@@ -82,6 +83,18 @@ class _ChatPage extends State<ChatPage> {
     }).catchError((error) {
       print('Cannot connect, exception occured');
       print(error);
+    });
+  }
+
+  /**
+   * TODO:remove duplication method from maind
+   */
+  void changeRecordingStatus() {
+    MyApp.messageBuffer.init().then((value) => {
+      StateDto.setSaveToFile(!StateDto.saveToFile),
+      /**
+       * Left here
+       */
     });
   }
 
@@ -138,9 +151,24 @@ class _ChatPage extends State<ChatPage> {
               : isConnected
                   ? Text('Live chat with ' + serverName)
                   : Text('Chat log with ' + serverName))),
+      floatingActionButton: GFToggle(
+        onChanged: (val) => {
+          setState(() {
+            changeRecordingStatus();
+          })
+        },
+        value: StateDto.saveToFile,
+        type: GFToggleType.ios,
+        boxShape: BoxShape.circle,
+        enabledText: 'ON',
+        disabledText: 'OFF',
+        enabledTrackColor: GFColors.DANGER,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      ),
       body: SafeArea(
         child: Column(
           children: <Widget>[
+            DigitalClockWidget(),
             Flexible(
               child: ListView(
                   padding: const EdgeInsets.all(12.0),
@@ -189,8 +217,6 @@ class _ChatPage extends State<ChatPage> {
       return value.body.toString();
     }
 
-    String response = "";
-    InfoStorage counterStorage = InfoStorage();
     // Create message if there is end of object
     String dataString = String.fromCharCodes(data);
     //manage case when \r and \n came in different packages

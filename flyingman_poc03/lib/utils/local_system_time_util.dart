@@ -14,6 +14,6 @@ class LocalSystemTimeUtil{
   }
 
   String getSystemTime() {
-    return DateFormat("H:m:ss.S").format(_dateTime);
+    return DateFormat("HH:mm:ss.S").format(_dateTime);
   }
 }

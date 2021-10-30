@@ -7,7 +7,6 @@ import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
 import 'package:flyingman_poc03/utils/message_buffer/message_buffer.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
 import 'package:flyingman_poc03/widgets/clock_page.dart';
-import 'package:flyingman_poc03/widgets/get_location.dart';
 import 'package:flyingman_poc03/widgets/listen_location.dart';
 import 'package:flyingman_poc03/widgets/permission_status_widget.dart';
 import 'package:flyingman_poc03/widgets/send_to_server.dart';
@@ -50,7 +49,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
@@ -72,13 +70,16 @@ class _MyHomePageState extends State<MyHomePage> {
   Color headerIconBgColor = Colors.red;
   double iconSize = 20;
 
-  void _changeRecordingStatus() {
+  /**
+   * TODO:this is duplication of method from chatpage
+   */
+  void changeRecordingStatus() {
     MyApp.messageBuffer.init().then((value) => {
-          StateDto.setSaveToFile(!StateDto.saveToFile),
-          headerIconColor = StateDto.saveToFile ? Colors.red : Colors.white,
-          headerIconBgColor = StateDto.saveToFile ? Colors.green : Colors.red,
-          iconSize = StateDto.saveToFile ? 30 : 20
-        });
+      StateDto.setSaveToFile(!StateDto.saveToFile),
+      headerIconColor = StateDto.saveToFile ? Colors.red : Colors.white,
+      headerIconBgColor = StateDto.saveToFile ? Colors.green : Colors.red,
+      iconSize = StateDto.saveToFile ? 30 : 20
+    });
   }
 
   @override
@@ -104,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
               onPressed: () {
                 setState(() {
-                  _changeRecordingStatus();
+                  changeRecordingStatus();
                 });
               },
               icon: Icon(StateDto.saveToFile
@@ -166,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: GFToggle(
         onChanged: (val) => {
           setState(() {
-            _changeRecordingStatus();
+            changeRecordingStatus();
           })
         },
         value: StateDto.saveToFile,
