@@ -1,14 +1,12 @@
 import 'constants.dart';
 
-enum MessageType { phone, bme }
-
 class SensorMessage {
   int id;
   String messageBody;
   String endpoint;
   DateTime timeAdded;
   DateTime timeLastRetry;
-  MessageType messageType;
+  String messageType;
   bool done;
 
   Map<String, Object?> toMap() {
@@ -18,19 +16,35 @@ class SensorMessage {
       columnEndPoint: endpoint,
       columnTimeAdded: timeAdded.toString(),
       columnTimeLastRetry: timeLastRetry.toString(),
-      columnMessageType: 'messageType'
+      columnMessageType: "",
+      columnId: id
+    };
+
+    return map;
+  }
+
+  Map<String, Object?> toMapForInsert() {
+    var map = <String, Object?>{
+      columnMessageBody: messageBody,
+      columnDone: done == true ? 1 : 0,
+      columnEndPoint: endpoint,
+      columnTimeAdded: timeAdded.toString(),
+      columnTimeLastRetry: timeLastRetry.toString(),
+      columnMessageType: "",
+
     };
     map[columnId] = null;
     return map;
   }
 
+
   SensorMessage markAsPhoneSensor() {
-    messageType = MessageType.phone;
+    messageType = "phone";
     return this;
   }
 
   SensorMessage markAsBmeSensor() {
-    messageType = MessageType.bme;
+    messageType = "bme";
     return this;
   }
 
@@ -52,6 +66,11 @@ class SensorMessage {
         endpoint: map[columnEndPoint].toString(),
         timeLastRetry: DateTime.parse(map[columnTimeLastRetry].toString()),
         timeAdded: DateTime.parse(map[columnTimeAdded].toString()),
-        messageType: map[columnMessageType] as MessageType);
+        messageType: map[columnMessageType] as String);
+  }
+
+  @override
+  String toString() {
+    return "{id:$id;messageBody:$messageBody;endpoint:$endpoint;timeAdded:$timeAdded;timeLastRetry:$timeLastRetry;messageType:$messageType;done:$done}";
   }
 }

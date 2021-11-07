@@ -12,9 +12,9 @@ class BmeSensorsContainer{
       sensorName: "",
       altitude_f: 0,
       humidity: 0,
-      measurement_id: Measurements(
+      measurement: Measurements(
         user_id: new UserData(id: 0),
-        user_device_id: 0,
+        user_device_id: "",
         measurement_uuid: "",
       ),
       time: DateTime.now(),

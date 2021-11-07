@@ -1,5 +1,7 @@
 
 
+import 'package:flyingman_poc03/main.dart';
+
 class StateDto {
   static bool _saveToFile = false;
 
@@ -7,6 +9,7 @@ class StateDto {
 
   static setSaveToFile(bool value) {
     _saveToFile = value;
+    MyApp.messageBuffer.runningCommitNow = false;
   }
 
 

@@ -3,6 +3,8 @@ import 'package:flyingman_poc03/dto/domain/sensor_data.dart';
 import 'package:flyingman_poc03/dto/domain/users.dart';
 import 'package:flyingman_poc03/utils/uid.dart';
 
+import '../../constants.dart';
+
 const sensorIdJsonNameFromSensor = "Name";
 const pressureJsonNameFromSensor = "T";
 const temperatureJsonNameFromSensor = "P";
@@ -30,7 +32,7 @@ class BmeSensorsData implements SensorData {
   String sensorName;
   double altitude_f;
   double humidity;
-  final Measurements measurement_id;
+  final Measurements measurement;
   DateTime time;
   String location;
 
@@ -42,22 +44,22 @@ class BmeSensorsData implements SensorData {
       required this.sensorName,
       required this.altitude_f,
       required this.humidity,
-      required this.measurement_id,
+      required this.measurement,
       required this.time,
       required this.location});
 
   factory BmeSensorsData.fromJson(Map<String, dynamic> json) {
     return BmeSensorsData(
-        sensorID: Uid().getSensorID(json[sensorIdJsonNameFromSensor] as String),
+        sensorID: Uid().getSensorID(json[sensorIdJsonNameFromSensor].toString()),
         pressure: json[pressureJsonNameFromSensor] as double,
         temperature: json[temperatureJsonNameFromSensor] as double,
         altitude: json[altitudeJsonNameFromSensor] as double,
         sensorName: json[sensorNameJsonNameFromSensor] as String,
         altitude_f: json[altitudeFJsonNameFromSensor] as double,
         humidity: json[humidityJsonNameFromSensor] as double,
-        measurement_id: Measurements(
-          user_id: new UserData(id: 6),
-          user_device_id: 1,
+        measurement: Measurements(
+          user_id: new UserData(id: userID),
+          user_device_id: "",
           measurement_uuid: Uid().getSensorID(
               "Phone" + DateTime.now().millisecondsSinceEpoch.toString()),
         ),
@@ -71,7 +73,7 @@ class BmeSensorsData implements SensorData {
         pressureJsonNameFromSensor: pressure,
         temperatureJsonNameFromSensor: temperature,
         humidityJsonNameFromSensor: humidity,
-        measurementIdJsonNameFromSensor: measurement_id,
+        measurementIdJsonNameFromSensor: measurement,
         altitudeJsonNameFromSensor: altitude,
       };
 
@@ -84,7 +86,7 @@ class BmeSensorsData implements SensorData {
         altitudeFJsonNameToBackEnd: altitude_f,
         humidityJsonNameToBackEnd: humidity,
         "time": time,
-        "measurement_id": measurement_id.toJsonToBackEnd(),
+        "measurement_id": measurement.toJsonToBackEnd(),
         "location": location,
       };
 }

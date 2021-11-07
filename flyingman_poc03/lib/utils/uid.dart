@@ -7,10 +7,14 @@ import 'package:device_info/device_info.dart';
 import 'package:uuid/uuid.dart';
 
 class Uid {
+
+  String deviceName = "UnableToGetDeviceName";
+  String deviceVersion= "UnableToGetDeviceVersion";
+  String identifier= "UnableToGetDeviceIdentifier";
+
+
   Future<List<String>> getDeviceDetails() async {
-    String deviceName = "UnableToGetDeviceName";
-    String deviceVersion= "UnableToGetDeviceVersion";
-    String identifier= "UnableToGetDeviceIdentifier";
+
     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
     try {
       if (Platform.isAndroid) {

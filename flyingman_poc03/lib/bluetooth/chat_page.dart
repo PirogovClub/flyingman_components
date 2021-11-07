@@ -10,6 +10,7 @@ import 'package:flyingman_poc03/utils/local_system_time_util.dart';
 import 'package:flyingman_poc03/utils/message_buffer/sensor_message.dart';
 import 'package:flyingman_poc03/utils/states_dto.dart';
 import 'package:flyingman_poc03/utils/storage.dart';
+import 'package:flyingman_poc03/utils/uid.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
 import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/components/toggle/gf_toggle.dart';
@@ -39,6 +40,8 @@ class _ChatPage extends State<ChatPage> {
   BluetoothConnection? connection;
   LocalSystemTimeUtil _localSystemTimeUtil = new LocalSystemTimeUtil();
 
+  Uid uid1 = new Uid();
+
   List<_Message> messages = List<_Message>.empty(growable: true);
   String _messageBuffer = '';
 
@@ -55,7 +58,7 @@ class _ChatPage extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-
+    uid1.getDeviceDetails();
     BluetoothConnection.toAddress(widget.server.address).then((_connection) {
       print('Connected to the device');
       connection = _connection;
@@ -91,11 +94,11 @@ class _ChatPage extends State<ChatPage> {
    */
   void changeRecordingStatus() {
     MyApp.messageBuffer.init().then((value) => {
-      StateDto.setSaveToFile(!StateDto.saveToFile),
-      /**
+          StateDto.setSaveToFile(!StateDto.saveToFile),
+          /**
        * Left here
        */
-    });
+        });
   }
 
   @override
@@ -169,6 +172,11 @@ class _ChatPage extends State<ChatPage> {
         child: Column(
           children: <Widget>[
             DigitalClockWidget(),
+            Text(uid1.identifier,
+                style: TextStyle(
+                    color: Color(0xff2d386b),
+                    fontSize: 30,
+                    fontWeight: FontWeight.w700)),
             Flexible(
               child: ListView(
                   padding: const EdgeInsets.all(12.0),
@@ -211,16 +219,16 @@ class _ChatPage extends State<ChatPage> {
     );
   }
 
-  _onDataReceived(Uint8List data) async {
-    String getBody(Response value) {
-      print("body:" + value.body.toString());
-      return value.body.toString();
-    }
+  String getBody(Response value) {
+    print("body:" + value.body.toString());
+    return value.body.toString();
+  }
 
+  _onDataReceived(Uint8List data) async {
     // Create message if there is end of object
     String dataString = String.fromCharCodes(data);
     //manage case when \r and \n came in different packages
-    if (dataString.indexOf("\n") == 0) {
+    /*if (dataString.indexOf("\n") == 0) {
       dataString = "\r" + dataString;
     }
     if (dataString.indexOf("\r") == (dataString.length - 1)) {
@@ -228,6 +236,9 @@ class _ChatPage extends State<ChatPage> {
     }
 
     List<String> messageparts = dataString.split("\r\n");
+    */
+
+    List<String> messageparts = dataString.split("|");
 
     if (messageparts.length == 1) {
       _messageBuffer = _messageBuffer + messageparts[0].replaceAll("\r\n", "");
@@ -242,31 +253,39 @@ class _ChatPage extends State<ChatPage> {
                 ",\"loc\":\"" +
                 "\"}";
         try {
+          print("before decode:" + _messageBuffer);
           BmeSensorsData bmeSensorsData =
               BmeSensorsData.fromJson(jsonDecode(_messageBuffer));
-
+          bmeSensorsData.measurement.user_device_id = uid1.identifier;
+          //Uid().getDeviceDetails().then((value) => print("Device id "+ value.toString()));
           if (StateDto.saveToFile) {
-            print(_messageBuffer);
+            //print(_messageBuffer);
+            var sensorMessage = SensorMessage(
+                id: 0,
+                messageBody: jsonEncode(bmeSensorsData.toJsonToBackEnd(),
+                        toEncodable: InfoStorage.myEncode)
+                    .toString(),
+                done: false,
+                endpoint: "http://69.87.221.132:8080/sensordata/add",
+                timeAdded: DateTime.now(),
+                timeLastRetry: DateTime.now(),
+                messageType: "bme");
+
             MyApp.messageBuffer
-                .addMessageToBuffer(SensorMessage(
-                    id: 0,
-                    messageBody: jsonEncode(bmeSensorsData.toJsonToBackEnd(), toEncodable: InfoStorage.myEncode)
-                        .toString(),
-                    done: false,
-                    endpoint: "http://69.87.221.132:8080/sensordata/add",
-                    timeAdded: DateTime.now(),
-                    timeLastRetry: DateTime.now(),
-                    messageType: MessageType.bme))
-                .then((value) => getBody(value))
+                .addMessageToBuffer(sensorMessage)
                 .then((value) => setState(() {
-                      messages.add(
-                          _Message(1, "Response recived " + value.toString()));
+                      messages.add(_Message(
+                          1, "Set to the queue: " + sensorMessage.toString()));
                     }));
-            _messageBuffer = _messageBuffer;
+
+            /* var s = "Queue length: " +
+                (await MyApp.messageBuffer.getAmountMessageInBuffer())
+                    .toString();
+            print(s);*/
           }
-        } on FormatException {
+        } on FormatException catch (e) {
           _messageBuffer = "";
-          print("broken string found from sensor");
+          print("broken string found from sensor: " + e.toString());
         }
 
         setState(() {

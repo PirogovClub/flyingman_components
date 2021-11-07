@@ -20,34 +20,39 @@ class _SendToServerState extends State<SendToServerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text('Server response: ${_serverResponse ?? "unknown"}',
-            style: Theme.of(context).textTheme.bodyText1),
-        Row(
-          children: <Widget>[
-            Container(
-              margin: const EdgeInsets.only(right: 42),
-              child: ElevatedButton(
-                child: const Text('Send Phone Data'),
-                onPressed: _sendPhoneDataQuery,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Send Test messages to server"),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('Server response: ${_serverResponse ?? "unknown"}',
+              style: Theme.of(context).textTheme.bodyText1),
+          Row(
+            children: <Widget>[
+              Container(
+                margin: const EdgeInsets.only(right: 42),
+                child: ElevatedButton(
+                  child: const Text('Send Phone Data'),
+                  onPressed: _sendPhoneDataQuery,
+                ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            Container(
-              margin: const EdgeInsets.only(right: 42),
-              child: ElevatedButton(
-                child: const Text('Send Sensor Data'),
-                onPressed: _sendPhoneDataQuery,
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                margin: const EdgeInsets.only(right: 42),
+                child: ElevatedButton(
+                  child: const Text('Send Sensor Data'),
+                  onPressed: _sendPhoneDataQuery,
+                ),
               ),
-            ),
-          ],
-        )
-      ],
+            ],
+          )
+        ],
+      ),
     );
   }
 

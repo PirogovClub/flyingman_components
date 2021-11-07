@@ -1,14 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
 import 'package:flyingman_poc03/utils/local_system_time_util.dart';
+import 'package:flyingman_poc03/utils/message_buffer/sensor_message.dart';
 import 'package:flyingman_poc03/utils/storage.dart';
 import 'package:http/http.dart';
 import 'package:location/location.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
+import '../main.dart';
 
 class ListenLocationWidget extends StatefulWidget {
   const ListenLocationWidget({Key? key}) : super(key: key);
@@ -31,10 +34,10 @@ class _ListenLocationState extends State<ListenLocationWidget> {
   Future<void> _listenLocation() async {
     InfoStorage counterStorage = new InfoStorage();
     List<StreamSubscription> _streamSubscriptions =
-    <StreamSubscription<dynamic>>[];
+        <StreamSubscription<dynamic>>[];
     _streamSubscriptions.add(
       accelerometerEvents.listen(
-            (AccelerometerEvent event) {
+        (AccelerometerEvent event) {
           sensorsContainer.phoneSensorData.accelerometer_x = event.x;
           sensorsContainer.phoneSensorData.accelerometer_y = event.y;
           sensorsContainer.phoneSensorData.accelerometer_z = event.z;
@@ -43,7 +46,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
     );
     _streamSubscriptions.add(
       gyroscopeEvents.listen(
-            (GyroscopeEvent event) {
+        (GyroscopeEvent event) {
           sensorsContainer.phoneSensorData.gyroscope_x = event.x;
           sensorsContainer.phoneSensorData.gyroscope_y = event.y;
           sensorsContainer.phoneSensorData.gyroscope_z = event.z;
@@ -52,7 +55,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
     );
     _streamSubscriptions.add(
       userAccelerometerEvents.listen(
-            (UserAccelerometerEvent event) {
+        (UserAccelerometerEvent event) {
           sensorsContainer.phoneSensorData.user_accelerometer_x = event.x;
           sensorsContainer.phoneSensorData.user_accelerometer_y = event.y;
           sensorsContainer.phoneSensorData.user_accelerometer_z = event.z;
@@ -61,7 +64,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
     );
     _streamSubscriptions.add(
       magnetometerEvents.listen(
-            (MagnetometerEvent event) {
+        (MagnetometerEvent event) {
           sensorsContainer.phoneSensorData.magnitometr_x = event.x;
           sensorsContainer.phoneSensorData.magnitometr_y = event.y;
           sensorsContainer.phoneSensorData.magnitometr_z = event.z;
@@ -71,32 +74,40 @@ class _ListenLocationState extends State<ListenLocationWidget> {
 
     _locationSubscription =
         location.onLocationChanged.handleError((dynamic err) {
-          if (err is PlatformException) {
-            _error = err.code;
-          }
-          _locationSubscription?.cancel();
-        }).listen((LocationData _locationResult) async {
-          _error = null;
-          var _date = new DateTime.fromMillisecondsSinceEpoch(
-              _locationResult.time!.toInt());
-          sensorsContainer.phoneSensorData.local_time = new DateTime.now();
-          sensorsContainer.phoneSensorData.altitude = _locationResult.altitude!;
-          sensorsContainer.phoneSensorData.latitude = _locationResult.latitude!;
-          sensorsContainer.phoneSensorData.longitude =
-          _locationResult.longitude!;
-          sensorsContainer.phoneSensorData.heading = _locationResult.heading!;
-          sensorsContainer.phoneSensorData.accuracy = _locationResult.accuracy!;
-          sensorsContainer.phoneSensorData.time = new DateTime.now();
-          counterStorage
-              .savePhoneDataToDB(counterStorage.locationData, "phonedata")
-              .then((value) => getBody(value))
-              .then((value) =>
-          {
-            setState(() {
-              _locationText = value;
-            })
-          });
-        });
+      if (err is PlatformException) {
+        _error = err.code;
+      }
+      _locationSubscription?.cancel();
+    }).listen((LocationData _locationResult) async {
+      _error = null;
+      var _date = new DateTime.fromMillisecondsSinceEpoch(
+          _locationResult.time!.toInt());
+      sensorsContainer.phoneSensorData.local_time = new DateTime.now();
+      sensorsContainer.phoneSensorData.altitude = _locationResult.altitude!;
+      sensorsContainer.phoneSensorData.latitude = _locationResult.latitude!;
+      sensorsContainer.phoneSensorData.longitude = _locationResult.longitude!;
+      sensorsContainer.phoneSensorData.heading = _locationResult.heading!;
+      sensorsContainer.phoneSensorData.accuracy = _locationResult.accuracy!;
+      sensorsContainer.phoneSensorData.time = new DateTime.now();
+
+      var sensorMessage = SensorMessage(
+          id: 0,
+          messageBody: jsonEncode(
+                  sensorsContainer.phoneSensorData.toJsonToBackEnd(),
+                  toEncodable: InfoStorage.myEncode)
+              .toString(),
+          done: false,
+          endpoint: "http://69.87.221.132:8080/phonedata/add",
+          timeAdded: DateTime.now(),
+          timeLastRetry: DateTime.now(),
+          messageType: "phone");
+print("sending phone data: "+ sensorMessage.toString());
+      MyApp.messageBuffer
+          .addMessageToBuffer(sensorMessage)
+          .then((value) => setState(() {
+                _locationText = "Set to the queue: " + sensorMessage.toString();
+              }));
+    });
     setState(() {});
   }
 
@@ -134,12 +145,8 @@ class _ListenLocationState extends State<ListenLocationWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Listen location: ' +
-              (_error ?? _locationText),
-          style: Theme
-              .of(context)
-              .textTheme
-              .bodyText1,
+          'Listen location: ' + (_error ?? _locationText),
+          style: Theme.of(context).textTheme.bodyText1,
         ),
         Row(
           children: <Widget>[
@@ -148,7 +155,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
               child: ElevatedButton(
                 child: const Text('Listen'),
                 onPressed:
-                _locationSubscription == null ? _listenLocation : null,
+                    _locationSubscription == null ? _listenLocation : null,
               ),
             ),
             ElevatedButton(

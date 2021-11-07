@@ -17,7 +17,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:getwidget/getwidget.dart';
 
 void main() {
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  //SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MyApp());
 }
 
@@ -25,6 +25,8 @@ class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
   PhoneSensorsContainer phoneSensorsContainer = PhoneSensorsContainer();
   static MessageBuffer messageBuffer = MessageBuffer();
+
+
 
   // This widget is the root of your application.
   @override
@@ -75,11 +77,11 @@ class _MyHomePageState extends State<MyHomePage> {
    */
   void changeRecordingStatus() {
     MyApp.messageBuffer.init().then((value) => {
-      StateDto.setSaveToFile(!StateDto.saveToFile),
-      headerIconColor = StateDto.saveToFile ? Colors.red : Colors.white,
-      headerIconBgColor = StateDto.saveToFile ? Colors.green : Colors.red,
-      iconSize = StateDto.saveToFile ? 30 : 20
-    });
+          StateDto.setSaveToFile(!StateDto.saveToFile),
+          headerIconColor = StateDto.saveToFile ? Colors.red : Colors.white,
+          headerIconBgColor = StateDto.saveToFile ? Colors.green : Colors.red,
+          iconSize = StateDto.saveToFile ? 30 : 20
+        });
   }
 
   @override
@@ -143,9 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Divider(height: 32),
             SensorsWidget(),
             Divider(height: 32),
-            SendToServerWidget(),
             Divider(height: 32),
-
           ],
         ),
       ),
@@ -219,13 +219,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Update the state of the app
                 // ...
                 // Then close the drawer
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context){
-                    return BlueToothWidget();
-                  })
-                );
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) {
+                  return BlueToothWidget();
+                }));
               },
             ),
+            ListTile(
+              title: const Text('Send test messages '),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) {
+                  return SendToServerWidget();
+                }));
+              },
+            )
           ],
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.

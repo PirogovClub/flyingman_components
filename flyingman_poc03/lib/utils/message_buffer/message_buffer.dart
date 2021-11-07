@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flyingman_poc03/dto/domain/bme_sensor_data.dart';
 import 'package:flyingman_poc03/dto/domain/sensor_data.dart';
@@ -17,75 +18,84 @@ class MessageBuffer {
   final SensorMessageProvider _sensorMessageProvider = SensorMessageProvider();
   final InfoStorage _infoStorage = InfoStorage();
 
-  MessageBuffer()  {
-  }
+  bool runningCommitNow = false;
 
-  MessageBuffer returnThis(){
+  MessageBuffer() {}
+
+  MessageBuffer returnThis() {
     return this;
   }
 
-  Future<MessageBuffer> init()  async {
-    await _infoStorage.getFilePath().then((value) => {
-      _sensorMessageProvider.open(value+ "/messageStorage.db")
-    }) ;
-    Timer.periodic(Duration(minutes: 3), (timer) {
-      resendAllMessages();
+  Future<MessageBuffer> init() async {
+    await _infoStorage.getFilePath().then(
+        (value) => {_sensorMessageProvider.open(value + "/messageStorage.db")});
+
+    Timer.periodic(Duration(seconds: 10), (timer) {
+      resendMessages();
+    });
+    Timer.periodic(Duration(seconds: 5), (timer) async {
+      if (!runningCommitNow) {
+        //bubblegum solution for not overlaping commits
+        runningCommitNow = true;
+        await _sensorMessageProvider.commitChanges();
+        runningCommitNow = false;
+      }
     });
     return this;
   }
 
-  Future<MessageBuffer> close()  async {
+  Future<MessageBuffer> close() async {
     await _sensorMessageProvider.close();
     return this;
   }
 
-  Future<Response> addMessageToBuffer(SensorMessage sensorMessage) async {
+  Future<void> addMessageToBuffer(SensorMessage sensorMessage) async {
     //TODO: To move logic from storage to here
-
     sensorMessage.timeAdded = DateTime.now();
-    return _sensorMessageProvider
-        .insert(sensorMessage)
-        .then((value) => sendMessageAndDeleteIfSuccessful(value));
+    _sensorMessageProvider.addInsertToBatch(sensorMessage);
   }
 
-  void resendAllMessages() {
-    _sensorMessageProvider.getAllSensorMessages().then((messageList) => {
-          for (var sensorMessage in messageList) {reSendMessage(sensorMessage)}
-        });
+  resendMessages() async {
+    print("before getting all messages to send");
+    await _sensorMessageProvider
+        .getAllSensorMessages()
+        .then((messageList) async {
+      for (var sensorMessage in messageList) {
+        reSendMessage(sensorMessage);
+      }
+    });
+    print("after sending all messages");
   }
 
-  Future<void> reSendMessage(SensorMessage sensorMessage) async {
+  Future<Response> reSendMessage(SensorMessage sensorMessage) async {
     //To move logic from storage to here
     sensorMessage.timeLastRetry = DateTime.now();
-    _sensorMessageProvider
-        .update(sensorMessage)
-        .then((value) => sendMessageAndDeleteIfSuccessful(sensorMessage));
+
+    _sensorMessageProvider.update(sensorMessage);
+    //print("sending sensorMessage:"+sensorMessage.toString());
+    return sendMessageAndDeleteIfSuccessful(sensorMessage);
   }
 
   Future<Response> sendMessageAndDeleteIfSuccessful(
       SensorMessage sensorMessage) async {
-
     try {
-      Future<Response> response =
-          _infoStorage.saveSensorMessageToServer(sensorMessage);
-      response.then((value) => {
-            if (value.statusCode == 201)
-              {_sensorMessageProvider.delete(sensorMessage.id)}
-          });
-/*var jsonD =jsonDecode(sensorMessage.messageBody);
-      Future<Response> response =
-      _infoStorage.saveSensorDataToDB(BmeSensorsData.fromJson(jsonD),"");
-      response.then((value) => {
-        if (value.statusCode == 201)
-          {_sensorMessageProvider.delete(sensorMessage.id)}
-      });*/
+      var response =
+          await _infoStorage.saveSensorMessageToServer(sensorMessage);
 
+      if (response.statusCode == 201) {
+        _sensorMessageProvider.delete(sensorMessage.id);
+        print("message deleted id:" + sensorMessage.id.toString());
+      }
       return response;
-    } on TimeoutException {
-      print("Server not responding");
-
+    } on SocketException catch (e) {
+      print("SocketException: " + e.toString());
+    } on TimeoutException catch (e) {
+      print("TimeoutException: " + e.toString());
     }
-    throw Exception("should not be here 1");
+    return Response("phhhhh", 400);
+  }
 
+  Future<int> getAmountMessageInBuffer() {
+    return _sensorMessageProvider.getAmountMessageInBuffer();
   }
 }

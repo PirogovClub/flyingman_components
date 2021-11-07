@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
@@ -10,6 +11,7 @@ import 'package:flyingman_poc03/dto/domain/bme_sensor_data.dart';
 import 'package:flyingman_poc03/dto/domain/phone_sensor_data.dart';
 import 'package:flyingman_poc03/dto/domain/users.dart';
 import 'package:flyingman_poc03/utils/uid.dart';
+import 'package:http/http.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
@@ -128,7 +130,7 @@ class InfoStorage {
         "Phone" + DateTime.now().millisecondsSinceEpoch.toString());
     PhoneSensorData phoneSensorData = PhoneSensorsContainer().phoneSensorData;
     phoneSensorData.measurement_id.measurement_uuid = uuid;
-    phoneSensorData.measurement_id.user_device_id = 1;
+    phoneSensorData.measurement_id.user_device_id = (await  Uid().getDeviceDetails())[2];;
     phoneSensorData.measurement_id.user_id = new UserData(id: 6);
 
     print(jsonEncode(phoneSensorData.toJsonToBackEnd(), toEncodable: myEncode)
@@ -143,13 +145,20 @@ class InfoStorage {
 
   Future<http.Response> saveSensorMessageToServer(
       SensorMessage sensorMessage) async {
-    print("SensorMessageToServer:"+ sensorMessage.messageBody);
-    return (http
-        .post(Uri.parse(sensorMessage.endpoint),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: sensorMessage.messageBody));
+    //print("SensorMessageToServer:"+ sensorMessage.messageBody);
+    /*try {*/
+    return( http
+          .post(Uri.parse(sensorMessage.endpoint),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: sensorMessage.messageBody));
+          /*.catchError((e)=>{http.Response(e.toString(), 500))})
+          .whenComplete(() => null);*/
+    /*} on SocketException catch(e){
+      print("catch exeption: " +e.toString());
+    }*/
+    //return (post);
     // body: jsonEncode(sensorMessage.messageBody, toEncodable: myEncode).toString()));
   }
 

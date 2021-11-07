@@ -1,6 +1,9 @@
 import 'package:decimal/decimal.dart';
 import 'package:flyingman_poc03/dto/domain/sensor_data.dart';
+import 'package:flyingman_poc03/dto/domain/users.dart';
+import 'package:flyingman_poc03/utils/uid.dart';
 import 'package:intl/intl.dart';
+import '../../constants.dart';
 import 'mesurments.dart';
 
 class PhoneSensorData implements SensorData {
@@ -104,6 +107,11 @@ class PhoneSensorData implements SensorData {
         time: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["time"]),
         local_time:
             DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["local_time"]),
-        measurement_id: Measurements.fromJson(json["measurement_id"]));
+        measurement_id: Measurements(
+          user_id: new UserData(id: userID),
+          user_device_id: "",
+          measurement_uuid: Uid().getSensorID(
+              "Phone" + DateTime.now().millisecondsSinceEpoch.toString()),
+        ),);
   }
 }

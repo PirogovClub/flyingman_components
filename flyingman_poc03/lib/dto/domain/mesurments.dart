@@ -7,7 +7,7 @@ class Measurements {
 
    UserData user_id;
 
-   int user_device_id;
+   String user_device_id;
 
    Measurements(
       {
