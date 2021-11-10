@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flyingman_poc03/bluetooth/main_bluetooth_page.dart';
 import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
 import 'package:flyingman_poc03/utils/message_buffer/message_buffer.dart';
+import 'package:flyingman_poc03/utils/uid.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
 import 'package:flyingman_poc03/widgets/clock_page.dart';
 import 'package:flyingman_poc03/widgets/listen_location.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
   PhoneSensorsContainer phoneSensorsContainer = PhoneSensorsContainer();
   static MessageBuffer messageBuffer = MessageBuffer();
+  static final Uid uids = Uid();
 
 
 
@@ -62,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
+    MyApp.uids.getDeviceDetails();
     setState(() {
       _packageInfo = info;
     });

@@ -7,6 +7,7 @@ import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
 import 'package:flyingman_poc03/utils/local_system_time_util.dart';
 import 'package:flyingman_poc03/utils/message_buffer/sensor_message.dart';
 import 'package:flyingman_poc03/utils/storage.dart';
+import 'package:flyingman_poc03/utils/uid.dart';
 import 'package:http/http.dart';
 import 'package:location/location.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -89,6 +90,7 @@ class _ListenLocationState extends State<ListenLocationWidget> {
       sensorsContainer.phoneSensorData.heading = _locationResult.heading!;
       sensorsContainer.phoneSensorData.accuracy = _locationResult.accuracy!;
       sensorsContainer.phoneSensorData.time = new DateTime.now();
+      sensorsContainer.phoneSensorData.measurement_id.user_device_id = MyApp.uids.identifier;
 
       var sensorMessage = SensorMessage(
           id: 0,

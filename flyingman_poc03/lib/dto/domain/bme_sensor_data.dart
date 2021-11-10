@@ -61,7 +61,7 @@ class BmeSensorsData implements SensorData {
           user_id: new UserData(id: userID),
           user_device_id: "",
           measurement_uuid: Uid().getSensorID(
-              "Phone" + DateTime.now().millisecondsSinceEpoch.toString()),
+              "Sensor" + DateTime.now().millisecondsSinceEpoch.toString()),
         ),
         time: DateTime.now(),
         location: "");

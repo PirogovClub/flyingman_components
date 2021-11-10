@@ -39,26 +39,20 @@ class _ChatPage extends State<ChatPage> {
   static final clientID = 0;
   BluetoothConnection? connection;
   LocalSystemTimeUtil _localSystemTimeUtil = new LocalSystemTimeUtil();
-
-  Uid uid1 = new Uid();
-
   List<_Message> messages = List<_Message>.empty(growable: true);
   String _messageBuffer = '';
-
   final TextEditingController textEditingController =
       new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
-
   bool isConnecting = true;
 
   bool get isConnected => (connection?.isConnected ?? false);
-
   bool isDisconnecting = false;
 
   @override
   void initState() {
     super.initState();
-    uid1.getDeviceDetails();
+
     BluetoothConnection.toAddress(widget.server.address).then((_connection) {
       print('Connected to the device');
       connection = _connection;
@@ -172,7 +166,7 @@ class _ChatPage extends State<ChatPage> {
         child: Column(
           children: <Widget>[
             DigitalClockWidget(),
-            Text(uid1.identifier,
+            Text(MyApp.uids.identifier,
                 style: TextStyle(
                     color: Color(0xff2d386b),
                     fontSize: 30,
@@ -256,7 +250,7 @@ class _ChatPage extends State<ChatPage> {
           print("before decode:" + _messageBuffer);
           BmeSensorsData bmeSensorsData =
               BmeSensorsData.fromJson(jsonDecode(_messageBuffer));
-          bmeSensorsData.measurement.user_device_id = uid1.identifier;
+          bmeSensorsData.measurement.user_device_id = MyApp.uids.identifier;
           //Uid().getDeviceDetails().then((value) => print("Device id "+ value.toString()));
           if (StateDto.saveToFile) {
             //print(_messageBuffer);

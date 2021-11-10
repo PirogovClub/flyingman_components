@@ -86,32 +86,33 @@ class PhoneSensorData implements SensorData {
 
   factory PhoneSensorData.fromJson(Map<String, dynamic> json) {
     return PhoneSensorData(
-        sensorId: json["sensorId"],
-        gyroscope_x: (json["gyroscope_x"]),
-        gyroscope_y: json["gyroscope_y"],
-        gyroscope_z: json["gyroscope_z"],
-        magnitometr_x: json["magnitometr_x"],
-        magnitometr_y: json["magnitometr_y"],
-        magnitometr_z: json["magnitometr_z"],
-        accelerometer_x: json["accelerometer_x"],
-        accelerometer_y: json["accelerometer_y"],
-        accelerometer_z: json["accelerometer_z"],
-        user_accelerometer_x: json["user_accelerometer_x"],
-        user_accelerometer_y: json["user_accelerometer_y"],
-        user_accelerometer_z: json["user_accelerometer_z"],
-        altitude: json["altitude"],
-        latitude: json["latitude"],
-        longitude: json["longitude"],
-        heading: json["heading"],
-        accuracy: json["accuracy"],
-        time: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["time"]),
-        local_time:
-            DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["local_time"]),
-        measurement_id: Measurements(
-          user_id: new UserData(id: userID),
-          user_device_id: "",
-          measurement_uuid: Uid().getSensorID(
-              "Phone" + DateTime.now().millisecondsSinceEpoch.toString()),
-        ),);
+      sensorId: json["sensorId"],
+      gyroscope_x: (json["gyroscope_x"]),
+      gyroscope_y: json["gyroscope_y"],
+      gyroscope_z: json["gyroscope_z"],
+      magnitometr_x: json["magnitometr_x"],
+      magnitometr_y: json["magnitometr_y"],
+      magnitometr_z: json["magnitometr_z"],
+      accelerometer_x: json["accelerometer_x"],
+      accelerometer_y: json["accelerometer_y"],
+      accelerometer_z: json["accelerometer_z"],
+      user_accelerometer_x: json["user_accelerometer_x"],
+      user_accelerometer_y: json["user_accelerometer_y"],
+      user_accelerometer_z: json["user_accelerometer_z"],
+      altitude: json["altitude"],
+      latitude: json["latitude"],
+      longitude: json["longitude"],
+      heading: json["heading"],
+      accuracy: json["accuracy"],
+      time: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["time"]),
+      local_time:
+          DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').parse(json["local_time"]),
+      measurement_id: Measurements(
+        user_id: new UserData(id: userID),
+        user_device_id: "",
+        measurement_uuid: Uid().getSensorID(
+            "Phone" + DateTime.now().millisecondsSinceEpoch.toString()),
+      ),
+    );
   }
 }
