@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:device_info/device_info.dart';
 import 'package:uuid/uuid.dart';
@@ -37,6 +36,6 @@ class Uid {
   }
 
   String getSensorID(String sensorName){
-    return Uuid().v5(Uuid.NAMESPACE_OID, sensorName+getDeviceDetails().toString());
+    return Uuid().v5(Uuid.NAMESPACE_OID, sensorName+identifier);
   }
 }
