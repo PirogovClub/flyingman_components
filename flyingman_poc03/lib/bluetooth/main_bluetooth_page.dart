@@ -99,6 +99,50 @@ class _BlueToothWidget extends State<BlueToothWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Divider(),
+                ListTile(
+                  title: ElevatedButton(
+                    child: const Text('Connect to paired device to chat'),
+                    onPressed: () async {
+                      final BluetoothDevice? selectedDevice =
+                          await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SelectBondedDevicePage(
+                                checkAvailability: false);
+                          },
+                        ),
+                      );
+
+                      if (selectedDevice != null) {
+                        print('Connect -> selected ' + selectedDevice.address);
+                        _startChat(context, selectedDevice);
+                      } else {
+                        print('Connect -> no device selected');
+                      }
+                    },
+                  ),
+                ),
+                ListTile(
+                  title: ElevatedButton(
+                      child: const Text('Explore discovered devices'),
+                      onPressed: () async {
+                        final BluetoothDevice? selectedDevice =
+                            await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DiscoveryPage();
+                            },
+                          ),
+                        );
+
+                        if (selectedDevice != null) {
+                          print('Discovery -> selected ' +
+                              selectedDevice.address);
+                        } else {
+                          print('Discovery -> no device selected');
+                        }
+                      }),
+                ),
                 ListTile(title: const Text('General')),
                 SwitchListTile(
                   title: const Text('Enable Bluetooth'),
@@ -219,50 +263,6 @@ class _BlueToothWidget extends State<BlueToothWidget> {
                           .setPairingRequestHandler(null);
                     }
                   },
-                ),
-                ListTile(
-                  title: ElevatedButton(
-                      child: const Text('Explore discovered devices'),
-                      onPressed: () async {
-                        final BluetoothDevice? selectedDevice =
-                            await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return DiscoveryPage();
-                            },
-                          ),
-                        );
-
-                        if (selectedDevice != null) {
-                          print('Discovery -> selected ' +
-                              selectedDevice.address);
-                        } else {
-                          print('Discovery -> no device selected');
-                        }
-                      }),
-                ),
-                ListTile(
-                  title: ElevatedButton(
-                    child: const Text('Connect to paired device to chat'),
-                    onPressed: () async {
-                      final BluetoothDevice? selectedDevice =
-                          await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return SelectBondedDevicePage(
-                                checkAvailability: false);
-                          },
-                        ),
-                      );
-
-                      if (selectedDevice != null) {
-                        print('Connect -> selected ' + selectedDevice.address);
-                        _startChat(context, selectedDevice);
-                      } else {
-                        print('Connect -> no device selected');
-                      }
-                    },
-                  ),
                 ),
                 Divider(),
                 ListTile(title: const Text('Multiple connections example')),
