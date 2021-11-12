@@ -95,13 +95,13 @@ void printToAndroid() {
     
     // Set output variable
     temp1 = bme1.readTemperature();
-    pressure1 = bme1.readPressure() / 100.0F;
+    pressure1 = bme1.readPressure() / 1.0F;
     alt_m1 = (bme1.readAltitude(SEALEVELPRESSURE_HPA)) - (ground_level1);
     alt_feet1 = (((bme1.readAltitude(SEALEVELPRESSURE_HPA))- (ground_level1))*3.28084);
     humidity1 = (bme1.readHumidity());
 
     temp2 = (bme2.readTemperature());
-    pressure2 = (bme2.readPressure() / 100.0F);
+    pressure2 = (bme2.readPressure() / 1.0F);
     alt_m2 = (bme2.readAltitude(SEALEVELPRESSURE_HPA)) - (ground_level2);
     alt_feet2 = (((bme2.readAltitude(SEALEVELPRESSURE_HPA))- (ground_level2))*3.28084);
     humidity2 = (bme2.readHumidity());    
