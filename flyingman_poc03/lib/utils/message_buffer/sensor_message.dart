@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import 'constants.dart';
 
 class SensorMessage {
@@ -24,12 +26,13 @@ class SensorMessage {
   }
 
   Map<String, Object?> toMapForInsert() {
+    DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
     var map = <String, Object?>{
       columnMessageBody: messageBody,
       columnDone: done == true ? 1 : 0,
       columnEndPoint: endpoint,
-      columnTimeAdded: timeAdded.toString(),
-      columnTimeLastRetry: timeLastRetry.toString(),
+      columnTimeAdded: dateFormat.format(timeAdded),
+      columnTimeLastRetry: dateFormat.format(timeLastRetry),
       columnMessageType: "",
 
     };

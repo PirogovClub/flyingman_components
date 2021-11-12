@@ -16,6 +16,7 @@ import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/components/toggle/gf_toggle.dart';
 import 'package:getwidget/types/gf_toggle_type.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 
 import '../main.dart';
 
@@ -242,7 +243,7 @@ class _ChatPage extends State<ChatPage> {
         _messageBuffer =
             _messageBuffer.substring(0, _messageBuffer.length - 1) +
                 ",\"Time\":\"" +
-                _localSystemTimeUtil.getSystemTime() +
+                DateFormat("yyyy/MM/dd H:mm:ss.S").format(DateTime.now()) +
                 "\"" +
                 ",\"loc\":\"" +
                 "\"}";
@@ -254,6 +255,9 @@ class _ChatPage extends State<ChatPage> {
           //Uid().getDeviceDetails().then((value) => print("Device id "+ value.toString()));
           if (StateDto.saveToFile) {
             //print(_messageBuffer);
+
+
+
             var sensorMessage = SensorMessage(
                 id: 0,
                 messageBody: jsonEncode(bmeSensorsData.toJsonToBackEnd(),
