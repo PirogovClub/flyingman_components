@@ -16,6 +16,7 @@ import 'package:flyingman_poc03/widgets/service_enabled.dart';
 import 'package:flyingman_poc03/utils/states_dto.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 void main() {
   //SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -52,6 +53,12 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+class SalesData {
+  SalesData(this.year, this.sales);
+  final String year;
+  final double sales;
+}
+
 class _MyHomePageState extends State<MyHomePage> {
 
   PackageInfo _packageInfo = PackageInfo(
@@ -74,6 +81,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Color headerIconColor = Colors.white;
   Color headerIconBgColor = Colors.red;
   double iconSize = 20;
+  late TooltipBehavior _tooltipBehavior;
+
+
 
   /**
    * TODO:this is duplication of method from chatpage
@@ -91,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _initPackageInfo();
+    _tooltipBehavior = TooltipBehavior(enable: true);
   }
 
   @override
@@ -138,6 +149,35 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Container(
+                child: SfCartesianChart(
+
+                    primaryXAxis: CategoryAxis(),
+                    // Chart title
+                    title: ChartTitle(text: 'Half yearly sales analysis'),
+                    // Enable legend
+                    legend: Legend(isVisible: true),
+                    // Enable tooltip
+                    tooltipBehavior: _tooltipBehavior,
+
+                    series: <LineSeries<SalesData, String>>[
+                      LineSeries<SalesData, String>(
+                          dataSource:  <SalesData>[
+                            SalesData('Jan', 35),
+                            SalesData('Feb', 28),
+                            SalesData('Mar', 34),
+                            SalesData('Apr', 32),
+                            SalesData('May', 40)
+                          ],
+                          xValueMapper: (SalesData sales, _) => sales.year,
+                          yValueMapper: (SalesData sales, _) => sales.sales,
+                          // Enable data label
+                          dataLabelSettings: DataLabelSettings(isVisible: true)
+                      )
+                    ]
+                )
+            ),
+            Divider(height: 32),
             PermissionStatusWidget(),
             Divider(height: 32),
             ServiceEnabledWidget(),
@@ -242,7 +282,8 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
