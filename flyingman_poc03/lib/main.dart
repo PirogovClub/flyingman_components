@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flyingman_poc03/bluetooth/main_bluetooth_page.dart';
 import 'package:flyingman_poc03/dto/containers/phone_sensor_container.dart';
+import 'package:flyingman_poc03/utils/message_buffer/buffer_history.dart';
 import 'package:flyingman_poc03/utils/message_buffer/message_buffer.dart';
 import 'package:flyingman_poc03/utils/uid.dart';
 import 'package:flyingman_poc03/widgets/clock.dart';
@@ -29,9 +30,6 @@ class MyApp extends StatelessWidget {
   static MessageBuffer messageBuffer = MessageBuffer();
   static final Uid uids = Uid();
 
-
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,7 +44,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
   final String title;
 
   @override
@@ -60,6 +57,7 @@ class SalesData {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late ChartSeriesController _chartSeriesController;
 
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
@@ -83,8 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
   double iconSize = 20;
   late TooltipBehavior _tooltipBehavior;
 
-
-
   /**
    * TODO:this is duplication of method from chatpage
    */
@@ -99,9 +95,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    super.initState();
     _initPackageInfo();
     _tooltipBehavior = TooltipBehavior(enable: true);
+    Timer.periodic(const Duration(seconds: 1), updateMessageBufferHistory);
+    super.initState();
+
   }
 
   @override
@@ -151,32 +149,35 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Container(
                 child: SfCartesianChart(
-
-                    primaryXAxis: CategoryAxis(),
-                    // Chart title
-                    title: ChartTitle(text: 'Half yearly sales analysis'),
+                    title: ChartTitle(text: 'Buffer Size'),
                     // Enable legend
                     legend: Legend(isVisible: true),
                     // Enable tooltip
                     tooltipBehavior: _tooltipBehavior,
-
-                    series: <LineSeries<SalesData, String>>[
-                      LineSeries<SalesData, String>(
-                          dataSource:  <SalesData>[
-                            SalesData('Jan', 35),
-                            SalesData('Feb', 28),
-                            SalesData('Mar', 34),
-                            SalesData('Apr', 32),
-                            SalesData('May', 40)
-                          ],
-                          xValueMapper: (SalesData sales, _) => sales.year,
-                          yValueMapper: (SalesData sales, _) => sales.sales,
+                    series: <LineSeries<BufferHistory, int>>[
+                      LineSeries<BufferHistory, int>(
+                          onRendererCreated:
+                              (ChartSeriesController controller) {
+                            _chartSeriesController = controller;
+                          },
+                          dataSource: MyApp.messageBuffer.messageBufferHistory,
+                          color: const Color.fromRGBO(192, 108, 132, 1),
+                          xValueMapper: (BufferHistory history, _) =>
+                              history.time,
+                          yValueMapper: (BufferHistory history, _) =>
+                              history.bufferSize,
                           // Enable data label
-                          dataLabelSettings: DataLabelSettings(isVisible: true)
-                      )
-                    ]
-                )
-            ),
+                          dataLabelSettings: DataLabelSettings(isVisible: true))
+                    ],
+                    primaryXAxis: NumericAxis(
+                        majorGridLines: const MajorGridLines(width: 0),
+                        edgeLabelPlacement: EdgeLabelPlacement.shift,
+                        interval: 3,
+                        title: AxisTitle(text: 'Time (seconds)')),
+                    primaryYAxis: NumericAxis(
+                        axisLine: const AxisLine(width: 0),
+                        majorTickLines: const MajorTickLines(size: 0),
+                        title: AxisTitle(text: 'Buffer size')))),
             Divider(height: 32),
             PermissionStatusWidget(),
             Divider(height: 32),
@@ -294,5 +295,13 @@ class _MyHomePageState extends State<MyHomePage> {
       subscription.cancel();
     }
     MyApp.messageBuffer.close();
+  }
+
+  void updateMessageBufferHistory(Timer timer) {
+    MyApp.messageBuffer.updateMessageBufferHistory();
+    MyApp.messageBuffer.getAmountMessageInBuffer().then((value) =>
+        _chartSeriesController.updateDataSource(
+            addedDataIndex: MyApp.messageBuffer.chartSize-1, removedDataIndex: 0));
+
   }
 }

@@ -11,14 +11,45 @@ import 'package:http/http.dart';
 
 import 'package:sqflite/sqflite.dart';
 
+import '../../main.dart';
 import '../storage.dart';
+import 'buffer_history.dart';
 
 class MessageBuffer {
   List<SensorMessage> _sensor_messages = [];
   final SensorMessageProvider _sensorMessageProvider = SensorMessageProvider();
   final InfoStorage _infoStorage = InfoStorage();
-
   bool runningCommitNow = false;
+
+  int time = 9;
+  int chartSize = 9;
+
+  List<BufferHistory> _messageBufferHistory = [
+    BufferHistory(0, 0),
+    BufferHistory(1, 2),
+    BufferHistory(2, 2),
+    BufferHistory(3, 3),
+    BufferHistory(4, 4),
+    BufferHistory(5, 4),
+    BufferHistory(6, 4),
+    BufferHistory(7, 5),
+    BufferHistory(8, 5)
+  ];
+
+
+
+  void updateMessageBufferHistory() {
+    getAmountMessageInBuffer().then(
+        (value)
+            {
+              _messageBufferHistory.add(BufferHistory(time++, value));
+              print("Message buffer=" + value.toString());
+              _messageBufferHistory.removeAt(0);
+              print("Message buffer history=" + _messageBufferHistory.length.toString());
+            });
+  }
+
+  List<BufferHistory> get messageBufferHistory => _messageBufferHistory;
 
   MessageBuffer() {}
 

@@ -6,10 +6,13 @@ import 'package:sqflite/sqflite.dart';
 import 'constants.dart';
 
 class SensorMessageProvider {
+
   Database? db;
 
   late Batch batch;
   late List<Object?> results;
+
+
 
   Future open(String path) async {
     db = await openDatabase(path, version: 1,
@@ -39,12 +42,6 @@ create table $tableMessages (
   }
 
   commitChanges() async {
-    /*await db!.transaction((txn) async {
-      print("in transaction of commit changes");
-      var localbatch = txn.batch();
-      localbatch = batch;
-      results = await localbatch.commit();
-    });*/
     print("batch size");
     Batch tmpBatch = batch;
     batch = db!.batch();
@@ -70,10 +67,13 @@ create table $tableMessages (
   }
 
   Future<int> getAmountMessageInBuffer() async {
-    int intToReturn = 0;
 
     List<Map<String, Object?>> maps = await db!.query(tableMessages,
-        columns: [columnId], where: '$columnId = ?', whereArgs: ["*"]);
+        columns: [
+          columnId
+        ]);
+    int intToReturn = 0;
+
     if (maps.isNotEmpty) {
       intToReturn = maps.length;
     }
